@@ -26,18 +26,21 @@
             align-items: center;
             padding: 20px;
             transition: background 0.3s ease;
+            position: relative;
         }
 
         /* Головний контейнер з м'якими тінями */
         .app-container {
-            max-width: 650px;
+            max-width: 700px;
             width: 100%;
-            background: rgba(255,255,255,0.75);
+            background: rgba(255,255,255,0.85);
             backdrop-filter: blur(12px);
             border-radius: 64px 48px 64px 48px;
             box-shadow: 0 25px 45px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.5);
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            position: relative;
+            z-index: 10;
         }
 
         /* Хедер з онлайном */
@@ -81,17 +84,19 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         .avatar-mini {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             background: #4a4e6b;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
+            font-weight: bold;
             background-size: cover;
             color: white;
             border: 2px solid #fff;
@@ -121,10 +126,12 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
             width: 100%;
             margin: 8px 0;
+            position: relative;
+            z-index: 20;
+            pointer-events: auto;
         }
 
         .btn-primary {
-            background: #3c4b6e;
             background: linear-gradient(135deg, #3f4e74, #2d3a58);
         }
 
@@ -154,16 +161,35 @@
             transition: all 0.25s ease;
             box-shadow: 0 12px 20px rgba(0,0,0,0.1);
             border: 1px solid #ffffffaa;
+            position: relative;
+            z-index: 15;
+            pointer-events: auto;
         }
 
         .option-card:active { transform: scale(0.96);}
+        
         .option-img {
-            width: 140px;
-            height: 140px;
+            width: 160px;
+            height: 160px;
             object-fit: cover;
             border-radius: 40px;
             margin-bottom: 16px;
-            background: #ddd;
+            background: linear-gradient(135deg, #e0e0e0, #f5f5f5);
+            box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+        }
+        
+        .emoji-placeholder {
+            width: 160px;
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+            background: linear-gradient(135deg, #ffe6f0, #ffd4e5);
+            border-radius: 40px;
+            margin-bottom: 16px;
+            margin-left: auto;
+            margin-right: auto;
             box-shadow: 0 5px 12px rgba(0,0,0,0.2);
         }
 
@@ -182,6 +208,8 @@
             border-radius: 32px;
             padding: 20px;
             margin-top: 15px;
+            max-height: 60vh;
+            overflow-y: auto;
         }
 
         .stat-item {
@@ -189,6 +217,8 @@
             justify-content: space-between;
             border-bottom: 1px solid #ccc;
             padding: 12px 0;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         footer {
@@ -198,11 +228,27 @@
             border-top: 1px solid #ddd9;
             background: #ffffff40;
         }
-
-        @media (max-width: 550px) {
-            .option-img { width: 100px; height: 100px;}
-            .game-options { gap: 12px;}
+        
+        input, button {
+            pointer-events: auto;
         }
+        
+        @media (max-width: 550px) {
+            .option-img, .emoji-placeholder { width: 110px; height: 110px; font-size: 4rem;}
+            .game-options { gap: 12px;}
+            .stat-item { flex-direction: column; align-items: flex-start;}
+        }
+        
+        @media (max-width: 480px) {
+            .option-img, .emoji-placeholder { width: 90px; height: 90px; font-size: 3rem;}
+        }
+        
+        /* Анімація завантаження */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        .screen:not(.hidden) { animation: fadeIn 0.3s ease; }
     </style>
 </head>
 <body>
@@ -220,15 +266,15 @@
     <!-- Екран реєстрації (ім'я) -->
     <div id="registerScreen" class="screen">
         <h2 style="text-align:center; margin-bottom:20px;">✨ Битва виборів ✨</h2>
-        <input type="text" id="usernameInput" placeholder="Твоє ім'я (напр. Максим)" style="width:100%; padding:14px; border-radius: 60px; border: 1px solid #bbb; margin-bottom: 16px; font-size:16px;">
+        <input type="text" id="usernameInput" placeholder="Твоє ім'я (напр. Максим)" style="width:100%; padding:14px; border-radius: 60px; border: 1px solid #bbb; margin-bottom: 16px; font-size:16px; pointer-events:auto;">
         <button id="startRegisterBtn" class="btn btn-primary">🚀 Почати подорож</button>
         <div style="margin-top:20px; font-size:12px; color:#555; text-align:center;">💡 Унікальне скорочення: <span id="previewNick">Макс Суслік</span></div>
-        <button id="authorBtn" style="margin-top: 25px; background:none; border:none; color:#2c3e66; text-decoration:underline;">Автор: Савчук Юрій</button>
+        <button id="authorBtn" style="margin-top: 25px; background:none; border:none; color:#2c3e66; text-decoration:underline; cursor:pointer;">Автор: Савчук Юрій</button>
     </div>
 
     <!-- Головне меню -->
     <div id="menuScreen" class="screen hidden">
-        <div style="text-align:center;" id="greetingMsg">Вітаю, <strong id="userNameDisplay">Гість</strong>!</div>
+        <div style="text-align:center; margin-bottom:20px;" id="greetingMsg">Вітаю, <strong id="userNameDisplay">Гість</strong>!</div>
         <div style="margin: 20px 0;">
             <button id="playBtnMenu" class="btn btn-primary">🎮 ГРАТИ</button>
             <button id="statsBtnMenu" class="btn btn-outline">📊 СТАТИСТИКА</button>
@@ -263,25 +309,27 @@
         messagingSenderId: "123456789012",
         appId: "1:123456789012:web:abc123def456"
     };
-    // (Заміни на реальні дані з Firebase консолі, але структура готова)
+    // (Заміни на реальні дані з Firebase консолі)
     const app = firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
     const auth = firebase.auth();
 
     // Глобальні змінні
-    let currentUser = null;      // { uid, name, slug }
+    let currentUser = null;
     let currentQuestionSet = null;
     let statsListenerRef = null;
 
-    // Питання/пари (картинки, текст, два варіанти)
+    // Питання/пари з підтримкою спеціальних іконок для абстрактних тем
     const QUESTION_BANK = [
-        { id: "tea_coffee", text: "Що обираєш сьогодні?", optA: "Чай 🍃", optB: "Кава ☕", imgA: "https://picsum.photos/id/225/300/200", imgB: "https://picsum.photos/id/431/300/200" },
-        { id: "milf_student", text: "Хто твій вайб?", optA: "Мілфа ✨", optB: "Студентка 🎓", imgA: "https://picsum.photos/id/26/300/200", imgB: "https://picsum.photos/id/20/300/200" },
-        { id: "cars_value", text: "Що важливіше?", optA: "Машини 🚗", optB: "Цінності 💎", imgA: "https://picsum.photos/id/107/300/200", imgB: "https://picsum.photos/id/42/300/200" },
-        { id: "truth_lie", text: "Правда чи брехня?", optA: "Правда 🧠", optB: "Брехня 🎭", imgA: "https://picsum.photos/id/1/300/200", imgB: "https://picsum.photos/id/0/300/200" },
-        { id: "moments_money", text: "Життєві моменти?", optA: "Моменти 📸", optB: "Гроші 💰", imgA: "https://picsum.photos/id/20/300/200", imgB: "https://picsum.photos/id/29/300/200" },
-        { id: "cats_dogs", text: "Хто кращий друг?", optA: "Коти 🐱", optB: "Собаки 🐶", imgA: "https://picsum.photos/id/219/300/200", imgB: "https://picsum.photos/id/237/300/200" },
-        { id: "beach_mount", text: "Відпочинок?", optA: "Пляж 🌊", optB: "Гори ⛰️", imgA: "https://picsum.photos/id/15/300/200", imgB: "https://picsum.photos/id/104/300/200" }
+        { id: "tea_coffee", text: "Що обираєш сьогодні?", optA: "Чай 🍃", optB: "Кава ☕", imgA: "https://picsum.photos/id/225/300/200", imgB: "https://picsum.photos/id/431/300/200", special: false },
+        { id: "milf_student", text: "Хто твій вайб?", optA: "Мілфа ✨", optB: "Студентка 🎓", imgA: "https://picsum.photos/id/26/300/200", imgB: "https://picsum.photos/id/20/300/200", special: false },
+        { id: "cars_value", text: "Що важливіше?", optA: "Машини 🚗", optB: "Цінності 💎", imgA: "https://picsum.photos/id/107/300/200", imgB: "https://picsum.photos/id/42/300/200", special: false },
+        { id: "truth_lie", text: "Правда чи брехня?", optA: "Правда 🧠", optB: "Брехня 🎭", imgA: "heart", imgB: "broken", special: true, emojiA: "❤️", emojiB: "💔" },
+        { id: "moments_money", text: "Життєві моменти?", optA: "Моменти 📸", optB: "Гроші 💰", imgA: "https://picsum.photos/id/20/300/200", imgB: "https://picsum.photos/id/29/300/200", special: false },
+        { id: "love_hate", text: "Ставлення до життя?", optA: "Любов 💕", optB: "Байдужість 😐", imgA: "heart", imgB: "neutral", special: true, emojiA: "💖", emojiB: "💨" },
+        { id: "optimist_pessimist", text: "Ти хто?", optA: "Оптиміст 🌞", optB: "Песиміст 🌧️", imgA: "sun", imgB: "rain", special: true, emojiA: "☀️", emojiB: "⛈️" },
+        { id: "cats_dogs", text: "Хто кращий друг?", optA: "Коти 🐱", optB: "Собаки 🐶", imgA: "https://picsum.photos/id/219/300/200", imgB: "https://picsum.photos/id/237/300/200", special: false },
+        { id: "beach_mount", text: "Відпочинок?", optA: "Пляж 🌊", optB: "Гори ⛰️", imgA: "https://picsum.photos/id/15/300/200", imgB: "https://picsum.photos/id/104/300/200", special: false }
     ];
 
     // Функція генерування індивідуального скорочення
@@ -289,12 +337,12 @@
         if (!name) return "Анонім";
         let base = name.trim().split(" ")[0];
         let suffix = Math.floor(Math.random() * 100);
-        let funny = ["Суслік", "Вовчик", "Кексик", "Маг", "Лис", "Хижак"];
+        let funny = ["Суслік", "Вовчик", "Кексик", "Маг", "Лис", "Хижак", "Смайлик", "Грім", "Блискавка", "Сонечко"];
         let rand = funny[Math.floor(Math.random() * funny.length)];
         return `${base} ${rand}${suffix}`;
     }
 
-    // Оновлення онлайн + аватарки (з Firebase Realtime Database)
+    // Оновлення онлайн + аватарки
     function updateOnlineStatus() {
         if (!currentUser) return;
         const userStatusRef = database.ref(`/status/${currentUser.uid}`);
@@ -303,12 +351,10 @@
             if (snap.val() === true) {
                 userStatusRef.onDisconnect().remove();
                 userStatusRef.set({ name: currentUser.name, slug: currentUser.slug, timestamp: Date.now() });
-                // для списку онлайну:
                 database.ref('/status').on('value', (snapshot) => {
                     const users = snapshot.val() || {};
                     const count = Object.keys(users).length;
                     document.getElementById('onlineCounter').innerText = count;
-                    // аватарки (показуємо перших 4)
                     const avatarDiv = document.getElementById('avatarGroupHeader');
                     avatarDiv.innerHTML = '';
                     let idx = 0;
@@ -338,11 +384,10 @@
         const update = {};
         update[`${choice}`] = increment;
         await voteRef.update(update);
-        // додатково лог для статистики користувача
         await database.ref(`/user_votes/${currentUser.uid}/${questionId}`).set(choice);
     }
 
-    // Підписка на статистику всіх питань
+    // Підписка на статистику
     function loadGlobalStats() {
         if (statsListenerRef) statsListenerRef.off();
         const statsDiv = document.getElementById('statList');
@@ -356,7 +401,10 @@
                 let total = (qStats.A || 0) + (qStats.B || 0);
                 let percentA = total ? Math.round((qStats.A || 0)/total*100) : 50;
                 let percentB = total ? Math.round((qStats.B || 0)/total*100) : 50;
-                html += `<div class="stat-item"><strong>${q.text}</strong><span>✅ ${q.optA}: ${percentA}% (${qStats.A||0}) &nbsp;|&nbsp; ${q.optB}: ${percentB}% (${qStats.B||0})</span></div>`;
+                html += `<div class="stat-item">
+                            <strong>${q.text}</strong>
+                            <span>✅ ${q.optA}: ${percentA}% (${qStats.A||0}) &nbsp;|&nbsp; ${q.optB}: ${percentB}% (${qStats.B||0})</span>
+                         </div>`;
             }
             statsDiv.innerHTML = html || "<i>Немає голосів, будь першим!</i>";
         });
@@ -375,32 +423,63 @@
         if(statsListenerRef) statsListenerRef.off();
     }
 
-    // Функція для побудови гри з випадковим питанням
+    // Функція рендеру гри з підтримкою спеціальних елементів
     function startGame() {
         const randomIndex = Math.floor(Math.random() * QUESTION_BANK.length);
         currentQuestionSet = { ...QUESTION_BANK[randomIndex] };
         const qData = currentQuestionSet;
-        document.getElementById('questionText').innerText = qData.text;
+        document.getElementById('questionText').innerHTML = qData.text;
         const container = document.getElementById('gameOptionsContainer');
-        container.innerHTML = `
-            <div class="option-card" data-choice="A">
-                <img class="option-img" src="${qData.imgA}" alt="varA" loading="lazy">
-                <h3>${qData.optA}</h3>
-            </div>
-            <div class="option-card" data-choice="B">
-                <img class="option-img" src="${qData.imgB}" alt="varB" loading="lazy">
-                <h3>${qData.optB}</h3>
-            </div>
-        `;
-        // додаємо обробники
+        
+        let optionAHtml, optionBHtml;
+        
+        if (qData.special) {
+            // Для абстрактних питань показуємо емодзі/символи замість картинок
+            optionAHtml = `
+                <div class="option-card" data-choice="A">
+                    <div class="emoji-placeholder">${qData.emojiA || '❤️'}</div>
+                    <h3>${qData.optA}</h3>
+                </div>
+            `;
+            optionBHtml = `
+                <div class="option-card" data-choice="B">
+                    <div class="emoji-placeholder">${qData.emojiB || '💔'}</div>
+                    <h3>${qData.optB}</h3>
+                </div>
+            `;
+        } else {
+            // Звичайні картинки з інтернету
+            optionAHtml = `
+                <div class="option-card" data-choice="A">
+                    <img class="option-img" src="${qData.imgA}" alt="varA" loading="lazy">
+                    <h3>${qData.optA}</h3>
+                </div>
+            `;
+            optionBHtml = `
+                <div class="option-card" data-choice="B">
+                    <img class="option-img" src="${qData.imgB}" alt="varB" loading="lazy">
+                    <h3>${qData.optB}</h3>
+                </div>
+            `;
+        }
+        
+        container.innerHTML = optionAHtml + optionBHtml;
+        
+        // Додаємо обробники подій для нових карток
         document.querySelectorAll('.option-card').forEach(card => {
-            card.addEventListener('click', async (e) => {
-                const choiceVal = card.getAttribute('data-choice') === 'A' ? 'A' : 'B';
-                await vote(currentQuestionSet.id, choiceVal);
-                alert(`Твій вибір: ${choiceVal === 'A' ? currentQuestionSet.optA : currentQuestionSet.optB}! Дякуємо за участь 🎉`);
-                startGame(); // нове питання одразу
-            });
+            card.removeEventListener('click', handleVote);
+            card.addEventListener('click', handleVote);
         });
+        
+        function handleVote(e) {
+            const card = e.currentTarget;
+            const choiceVal = card.getAttribute('data-choice') === 'A' ? 'A' : 'B';
+            vote(currentQuestionSet.id, choiceVal).then(() => {
+                alert(`Твій вибір: ${choiceVal === 'A' ? currentQuestionSet.optA : currentQuestionSet.optB}! Дякуємо за участь 🎉`);
+                startGame();
+            }).catch(err => console.error(err));
+        }
+        
         document.getElementById('gameScreen').classList.remove('hidden');
         document.getElementById('menuScreen').classList.add('hidden');
         document.getElementById('statsScreen').classList.add('hidden');
@@ -414,93 +493,96 @@
         }
         const name = rawName.trim();
         const slug = generateSlug(name);
-        const fakeUid = "user_" + Date.now() + "_" + Math.floor(Math.random()*10000);
-        currentUser = {
-            uid: fakeUid,
-            name: name,
-            slug: slug
-        };
-        // Імітуємо anonymous auth через firebase (анонімний логін для простоти)
         auth.signInAnonymously().then(userCred => {
-            currentUser.uid = userCred.user.uid;
+            currentUser = {
+                uid: userCred.user.uid,
+                name: name,
+                slug: slug
+            };
             database.ref(`/users/${currentUser.uid}`).set({ name: name, slug: slug, lastSeen: Date.now() });
             updateOnlineStatus();
+            document.getElementById('userNameDisplay').innerHTML = `${name} / ${slug}`;
+            document.getElementById('greetingMsg').innerHTML = `Вітаю, <strong>${name}</strong> (${slug})!`;
+            document.getElementById('registerScreen').classList.add('hidden');
+            document.getElementById('menuScreen').classList.remove('hidden');
         }).catch(e => {
-            console.warn("fallback без аутентифікації:", e);
-            updateOnlineStatus();
+            console.error("Помилка аутентифікації:", e);
+            alert("Помилка підключення, спробуйте ще раз");
         });
-        document.getElementById('userNameDisplay').innerHTML = `${name} / ${slug}`;
-        document.getElementById('greetingMsg').innerHTML = `Вітаю, <strong>${name}</strong> (${slug})!`;
-        document.getElementById('registerScreen').classList.add('hidden');
-        document.getElementById('menuScreen').classList.remove('hidden');
         return true;
     }
 
     // Прев'ю скорочення
     const nameInput = document.getElementById('usernameInput');
     const previewSpan = document.getElementById('previewNick');
-    nameInput.addEventListener('input', (e) => {
-        let val = e.target.value;
-        if(val) previewSpan.innerText = generateSlug(val);
-        else previewSpan.innerText = "Макс Суслік";
-    });
+    if (nameInput) {
+        nameInput.addEventListener('input', (e) => {
+            let val = e.target.value;
+            if(val) previewSpan.innerText = generateSlug(val);
+            else previewSpan.innerText = "Макс Суслік";
+        });
+    }
 
-    // Кнопки навігації
-    document.getElementById('startRegisterBtn').onclick = () => registerUser(nameInput.value);
-    document.getElementById('playBtnMenu').onclick = () => startGame();
-    document.getElementById('statsBtnMenu').onclick = () => {
+    // Кнопки навігації з перевіркою на існування
+    const startBtn = document.getElementById('startRegisterBtn');
+    if (startBtn) startBtn.onclick = () => registerUser(nameInput?.value || "");
+    
+    const playBtn = document.getElementById('playBtnMenu');
+    if (playBtn) playBtn.onclick = () => startGame();
+    
+    const statsBtn = document.getElementById('statsBtnMenu');
+    if (statsBtn) statsBtn.onclick = () => {
         loadGlobalStats();
         document.getElementById('statsScreen').classList.remove('hidden');
         document.getElementById('menuScreen').classList.add('hidden');
         document.getElementById('gameScreen').classList.add('hidden');
     };
-    document.getElementById('backToMenuFromGame').onclick = () => {
+    
+    const backFromGame = document.getElementById('backToMenuFromGame');
+    if (backFromGame) backFromGame.onclick = () => {
         document.getElementById('menuScreen').classList.remove('hidden');
         document.getElementById('gameScreen').classList.add('hidden');
     };
-    document.getElementById('backToMenuFromStats').onclick = () => {
+    
+    const backFromStats = document.getElementById('backToMenuFromStats');
+    if (backFromStats) backFromStats.onclick = () => {
         document.getElementById('menuScreen').classList.remove('hidden');
         document.getElementById('statsScreen').classList.add('hidden');
     };
-    document.getElementById('logoutBtnMenu').onclick = () => logout();
-    document.getElementById('authorBtn').onclick = () => alert("Савчук Юрій\nEmail: urasavchuk2206v@gmail.com\n+380671995144\n© 2025 Всі вибори справжні");
+    
+    const logoutBtn = document.getElementById('logoutBtnMenu');
+    if (logoutBtn) logoutBtn.onclick = () => logout();
+    
+    const authorBtn = document.getElementById('authorBtn');
+    if (authorBtn) authorBtn.onclick = () => alert("Савчук Юрій\nEmail: urasavchuk2206v@gmail.com\n+380671995144\n© 2025 Всі вибори справжні");
 
-    // Фон звуки (легкий ефект при кліку)
+    // Звуки при кліку
     function playSoftClick() {
         let audio = new Audio("https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3");
-        audio.volume = 0.2;
-        audio.play().catch(e=>console.log("audio block"));
+        audio.volume = 0.15;
+        audio.play().catch(e=>console.log("autoplay blocked"));
     }
+    
     document.body.addEventListener('click', (e) => {
-        if(e.target.closest('.btn') || e.target.closest('.option-card')) playSoftClick();
+        if(e.target.closest('.btn') || e.target.closest('.option-card')) {
+            playSoftClick();
+        }
     });
 
-    // ініціалізація: перевірка чи вже є логін (для демо немає, але при завантаженні показуємо реєстрацію)
+    // Ініціалізація + кешування картинок
     window.onload = () => {
         document.getElementById('registerScreen').classList.remove('hidden');
         document.getElementById('menuScreen').classList.add('hidden');
         document.getElementById('gameScreen').classList.add('hidden');
         document.getElementById('statsScreen').classList.add('hidden');
-        // прелоад картинок (кешування)
+        // Прелоад картинок
         QUESTION_BANK.forEach(q => {
-            const img1 = new Image(); img1.src = q.imgA;
-            const img2 = new Image(); img2.src = q.imgB;
+            if (!q.special && q.imgA && q.imgA.startsWith('http')) {
+                const img1 = new Image(); img1.src = q.imgA;
+                const img2 = new Image(); img2.src = q.imgB;
+            }
         });
     };
-
-    // Ефект для фонового адаптивного кольору
-    const root = document.getElementById('appRoot');
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-        document.body.style.background = e.matches ? "#1a1c23" : "linear-gradient(145deg, #f0f2f5 0%, #e6e9ef 100%)";
-    });
-    document.body.style.background = "linear-gradient(135deg, #eef2f7, #dadfe8)";
-
-    // Додатково: показуємо свої дані в хедері аватар
-    setInterval(() => {
-        if(currentUser && document.getElementById('myAvatarPreview')) {
-            document.getElementById('myAvatarPreview').innerText = currentUser.name.charAt(0).toUpperCase();
-        }
-    }, 1000);
 </script>
 </body>
 </html>
