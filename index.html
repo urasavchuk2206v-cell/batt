@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Хто краще?</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f0f2f5;
+}
+
+/* top bar */
+#topbar{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:50px;
+  background:#fff;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0 15px;
+  border-bottom:1px solid #ddd;
+  z-index:10;
+}
+
+#online{
+  font-weight:bold;
+}
+
+#statsBtn{
+  color:#1877f2;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+/* start */
+#start{
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+}
+
+/* battle */
+#game{
+  display:none;
+  height:100vh;
+}
+
+.option{
+  width:50%;
+  height:100vh;
+  float:left;
+  position:relative;
+  cursor:pointer;
+}
+
+.option img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.label{
+  position:absolute;
+  bottom:20px;
+  left:20px;
+  color:white;
+  font-size:30px;
+  font-weight:bold;
+  text-shadow:0 0 10px black;
+}
+
+/* panel */
+#panel{
+  position:fixed;
+  top:0;
+  right:-40%;
+  width:40%;
+  height:100%;
+  background:#fff;
+  border-left:1px solid #ddd;
+  transition:0.3s;
+  padding:20px;
+  overflow:auto;
+}
+
+#panel.open{
+  right:0;
+}
+
+button{
+  padding:12px 20px;
+  background:#1877f2;
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div id="topbar">
+  <div id="online">👁 0</div>
+  <div id="statsBtn" onclick="togglePanel()">Статистика</div>
+</div>
+
+<div id="start">
+  <h1>Хто краще?</h1>
+  <button onclick="startGame()">Почати</button>
+</div>
+
+<div id="game">
+  <div class="option" onclick="vote(current.a)">
+    <img id="img1">
+    <div class="label" id="text1"></div>
+  </div>
+
+  <div class="option" onclick="vote(current.b)">
+    <img id="img2">
+    <div class="label" id="text2"></div>
+  </div>
+</div>
+
+<div id="panel">
+  <h2>Статистика</h2>
+  <div id="stats"></div>
+</div>
+
+<!-- Firebase (старий, щоб працювало на GitHub Pages) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<script>
+// 🔥 ВСТАВ СЮДИ СВІЙ CONFIG З FIREBASE
+const firebaseConfig = {
+  apiKey: "PASTE",
+  authDomain: "PASTE",
+  databaseURL: "PASTE",
+  projectId: "PASTE",
+  storageBucket: "PASTE",
+  messagingSenderId: "PASTE",
+  appId: "PASTE"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+/* ONLINE */
+const me = db.ref("online").push(true);
+me.onDisconnect().remove();
+
+db.ref("online").on("value", snap=>{
+  document.getElementById("online").innerText = "👁 " + snap.numChildren();
+});
+
+/* PAIRS */
+const pairs = [
+  {
+    a:"АТБ",
+    b:"Сільпо",
+    imgA:"https://upload.wikimedia.org/wikipedia/commons/7/7f/ATB-Market_logo.png",
+    imgB:"https://upload.wikimedia.org/wikipedia/commons/5/5c/Silpo_logo.png"
+  },
+  {
+    a:"Піцца",
+    b:"Суші",
+    imgA:"https://images.unsplash.com/photo-1594007654729-407eedc4be65",
+    imgB:"https://images.unsplash.com/photo-1579584425555-c3ce17fd4351"
+  },
+  {
+    a:"Кава",
+    b:"Чай",
+    imgA:"https://images.unsplash.com/photo-1509042239860-f550ce710b93",
+    imgB:"https://images.unsplash.com/photo-1511920170033-f8396924c348"
+  }
+];
+
+let current;
+
+/* START */
+function startGame(){
+  document.getElementById("start").style.display="none";
+  document.getElementById("game").style.display="block";
+  next();
+}
+
+function next(){
+  current = pairs[Math.floor(Math.random()*pairs.length)];
+
+  img1.src = current.imgA;
+  img2.src = current.imgB;
+
+  text1.innerText = current.a;
+  text2.innerText = current.b;
+}
+
+/* VOTE */
+function vote(option){
+  db.ref("votes/"+option).transaction(v=> (v||0)+1);
+  next();
+}
+
+/* STATS */
+db.ref("votes").on("value", snap=>{
+  const data = snap.val() || {};
+  let total = 0;
+
+  for(let k in data) total += data[k];
+
+  let html = "";
+  for(let k in data){
+    let p = total ? ((data[k]/total)*100).toFixed(0) : 0;
+    html += `<p>${k} — ${p}%</p>`;
+  }
+
+  document.getElementById("stats").innerHTML = html;
+});
+
+/* PANEL */
+function togglePanel(){
+  document.getElementById("panel").classList.toggle("open");
+}
+</script>
+
+</body>
+</html>
