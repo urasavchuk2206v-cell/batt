@@ -1,315 +1,260 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>Choice Game</title>
-
-<style>
-
-*{
-box-sizing:border-box;
-}
-
-body{
-margin:0;
-font-family:Arial;
-background:#111;
-color:white;
-}
-
-header{
-background:#000;
-padding:15px;
-text-align:center;
-font-size:22px;
-}
-
-.screen{
-display:none;
-padding:20px;
-text-align:center;
-}
-
-.active{
-display:block;
-}
-
-button{
-padding:14px 25px;
-margin:10px;
-border:none;
-border-radius:8px;
-font-size:18px;
-background:#ff4444;
-color:white;
-cursor:pointer;
-}
-
-button:hover{
-background:#ff2222;
-}
-
-.vote{
-display:flex;
-flex-direction:column;
-gap:10px;
-margin-top:20px;
-}
-
-.choice{
-position:relative;
-cursor:pointer;
-}
-
-.choice img{
-width:100%;
-max-height:320px;
-object-fit:cover;
-border-radius:10px;
-}
-
-.label{
-position:absolute;
-bottom:10px;
-left:10px;
-background:rgba(0,0,0,0.7);
-padding:8px 10px;
-border-radius:6px;
-}
-
-.stats{
-font-size:20px;
-margin-top:20px;
-}
-
-.online{
-font-size:26px;
-color:#00ffcc;
-}
-
-@media(min-width:700px){
-
-.vote{
-flex-direction:row;
-}
-
-.choice img{
-height:420px;
-}
-
-}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Бітва Варіантів</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="[cdnjs.cloudflare.com](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css)">
+    <link rel="preconnect" href="[fonts.googleapis.com](https://fonts.googleapis.com)">
+    <link rel="preconnect" href="[fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
+    <link href="[fonts.googleapis.com](https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Oswald:wght@400;500;600&display=swap)" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
-
 <body>
-
-<header>CHOICE GAME</header>
-
-<!-- MENU -->
-
-<div id="menu" class="screen active">
-
-<h2>Меню</h2>
-
-<button onclick="startGame()">Грати</button>
-<button onclick="openStats()">Статистика</button>
-
-</div>
-
-<!-- GAME -->
-
-<div id="game" class="screen">
-
-<h2>Що краще?</h2>
-
-<div class="vote">
-
-<div class="choice" onclick="vote(1)">
-<img id="img1">
-<div class="label" id="text1"></div>
-</div>
-
-<div class="choice" onclick="vote(2)">
-<img id="img2">
-<div class="label" id="text2"></div>
-</div>
-
-</div>
-
-<br>
-
-<button onclick="exitGame()">Назад</button>
-
-</div>
-
-<!-- STATS -->
-
-<div id="stats" class="screen">
-
-<h2>Статистика</h2>
-
-<div class="stats">
-
-A: <span id="aVotes">0</span><br>
-B: <span id="bVotes">0</span>
-
-</div>
-
-<br>
-
-<div class="online">
-
-Онлайн: <span id="onlineCount">0</span>
-
-</div>
-
-<br>
-
-<button onclick="backMenu()">Назад</button>
-
-</div>
-
-<script>
-
-let polls=[
-
-{
-a:"ATB",
-b:"Silpo",
-imgA:"https://upload.wikimedia.org/wikipedia/commons/5/5e/ATB-Market_logo.svg",
-imgB:"https://upload.wikimedia.org/wikipedia/commons/3/3f/Silpo_logo.svg"
-},
-
-{
-a:"Pizza",
-b:"Burger",
-imgA:"https://images.unsplash.com/photo-1601924638867-3ec2c8c3c6b7",
-imgB:"https://images.unsplash.com/photo-1550547660-d9450f859349"
-},
-
-{
-a:"Cat",
-b:"Dog",
-imgA:"https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba",
-imgB:"https://images.unsplash.com/photo-1517849845537-4d257902454a"
-},
-
-{
-a:"Tea",
-b:"Coffee",
-imgA:"https://images.unsplash.com/photo-1509042239860-f550ce710b93",
-imgB:"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085"
-}
-
-]
-
-let votesA=0
-let votesB=0
-let currentPoll
-
-function show(id){
-
-document.querySelectorAll(".screen").forEach(s=>{
-s.classList.remove("active")
-})
-
-document.getElementById(id).classList.add("active")
-
-}
-
-function startGame(){
-
-show("game")
-nextPoll()
-
-}
-
-function nextPoll(){
-
-currentPoll=polls[Math.floor(Math.random()*polls.length)]
-
-img1.src=currentPoll.imgA
-img2.src=currentPoll.imgB
-
-text1.innerText=currentPoll.a
-text2.innerText=currentPoll.b
-
-}
-
-function vote(side){
-
-if(side==1){
-votesA++
-}else{
-votesB++
-}
-
-aVotes.innerText=votesA
-bVotes.innerText=votesB
-
-nextPoll()
-
-}
-
-function exitGame(){
-
-show("menu")
-
-}
-
-function openStats(){
-
-show("stats")
-
-}
-
-function backMenu(){
-
-show("menu")
-
-}
-
-</script>
-
-<script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"
-import { getDatabase, ref, set, onDisconnect, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
-
-const firebaseConfig={
-
-apiKey:"YOUR_KEY",
-authDomain:"YOUR_DOMAIN",
-databaseURL:"YOUR_DB",
-projectId:"YOUR_PROJECT"
-
-}
-
-const app=initializeApp(firebaseConfig)
-const db=getDatabase(app)
-
-const onlineRef=ref(db,"online")
-const userRef=ref(db,"online/"+Math.random())
-
-set(userRef,true)
-
-onDisconnect(userRef).remove()
-
-onValue(onlineRef,(snap)=>{
-
-let count=0
-snap.forEach(()=>count++)
-
-document.getElementById("onlineCount").innerText=count
-
-})
-
-</script>
-
+    <div class="app-container">
+        <!-- Екран реєстрації -->
+        <div id="register-screen" class="screen active">
+            <div class="panel glass">
+                <h1><i class="fas fa-user-plus"></i> Вітаємо в Бітві</h1>
+                <p class="subtitle">Обирай між варіантами. Статистика світу чекає.</p>
+                <div class="input-group">
+                    <label for="playerName"><i class="fas fa-signature"></i> Твоє ім'я</label>
+                    <input type="text" id="playerName" placeholder="Введіть ім'я" maxlength="12">
+                    <div class="hint">Будет показано як "Макс Суслік"</div>
+                </div>
+                <button id="startGameBtn" class="btn-primary">
+                    <i class="fas fa-play-circle"></i> Почати гру
+                </button>
+                <div class="firebase-auth">
+                    <p class="or-divider">або увійти через</p>
+                    <button id="googleSignIn" class="btn-social">
+                        <i class="fab fa-google"></i> Google
+                    </button>
+                    <button id="guestSignIn" class="btn-outline">
+                        <i class="fas fa-user-secret"></i> Грати як гість
+                    </button>
+                </div>
+                <div class="terms">Граючи, ви погоджуєтесь з умовами.</div>
+            </div>
+            <div class="online-preview">
+                <h3><i class="fas fa-users"></i> Онлайн зараз</h3>
+                <div id="onlineAvatars" class="avatars-grid"></div>
+            </div>
+        </div>
+        <!-- Головне меню -->
+        <div id="menu-screen" class="screen">
+            <div class="header-menu">
+                <div class="user-welcome">
+                    <div class="avatar" id="menuAvatar"></div>
+                    <div class="user-info">
+                        <h2 id="welcomeName">Макс Суслік</h2>
+                        <div class="user-stats">
+                            <span><i class="fas fa-check-circle"></i> Виборів: <strong id="totalVotes">0</strong></span>
+                            <span><i class="fas fa-chart-line"></i> Рейтинг: <strong id="userRating">#</strong></span>
+                        </div>
+                    </div>
+                </div>
+                <button id="logoutBtn" class="btn-icon" title="Вийти">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+            <div class="menu-content">
+                <button id="playBtn" class="menu-btn big">
+                    <i class="fas fa-gamepad"></i>
+                    <span>Грати</span>
+                    <div class="pulse"></div>
+                </button>
+                <button id="statsBtn" class="menu-btn">
+                    <i class="fas fa-chart-bar"></i> Статистика
+                </button>
+                <button id="topBtn" class="menu-btn">
+                    <i class="fas fa-trophy"></i> Топ гравців
+                </button>
+                <button id="settingsBtn" class="menu-btn">
+                    <i class="fas fa-cog"></i> Налаштування
+                </button>
+                <button id="aboutBtn" class="menu-btn">
+                    <i class="fas fa-info-circle"></i> Про автора
+                </button>
+            </div>
+            <div class="footer-menu">
+                <div class="online-counter">
+                    <i class="fas fa-globe"></i>
+                    <span>Онлайн: <strong id="onlineCount">0</strong></span>
+                    <div id="liveDot" class="live-dot"></div>
+                </div>
+                <button id="soundToggle" class="btn-icon sound-on">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Екран гри -->
+        <div id="game-screen" class="screen">
+            <div class="game-header">
+                <button id="backToMenu" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Меню
+                </button>
+                <div class="game-progress">
+                    <div class="progress-bar">
+                        <div id="progressFill" class="progress-fill"></div>
+                    </div>
+                    <div class="progress-text">Питання <span id="currentQuestion">1</span> з 10</div>
+                </div>
+                <div class="player-tag">
+                    <div class="mini-avatar" id="gameAvatar"></div>
+                    <span id="gamePlayerName">Макс</span>
+                </div>
+            </div>
+            <div class="battle-container">
+                <h2 id="questionText">Що краще?</h2>
+                <div class="choices">
+                    <div class="choice left" id="choiceA">
+                        <div class="choice-image" id="imageA"></div>
+                        <div class="choice-overlay">
+                            <h3 id="textA">Чай</h3>
+                            <button class="btn-select" data-choice="left">
+                                <i class="fas fa-hand-pointer"></i> Обрати
+                            </button>
+                        </div>
+                        <div class="hover-effect"></div>
+                    </div>
+                    <div class="vs-badge">
+                        <span>VS</span>
+                    </div>
+                    <div class="choice right" id="choiceB">
+                        <div class="choice-image" id="imageB"></div>
+                        <div class="choice-overlay">
+                            <h3 id="textB">Кава</h3>
+                            <button class="btn-select" data-choice="right">
+                                <i class="fas fa-hand-pointer"></i> Обрати
+                            </button>
+                        </div>
+                        <div class="hover-effect"></div>
+                    </div>
+                </div>
+                <div class="quick-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-users"></i>
+                        <span>Світ обрав: <strong id="globalChoiceA">50%</strong></span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-clock"></i>
+                        <span>Часу: <strong id="timer">10</strong>с</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-users"></i>
+                        <span>Світ обрав: <strong id="globalChoiceB">50%</strong></span>
+                    </div>
+                </div>
+            </div>
+            <div class="game-footer">
+                <button id="skipBtn" class="btn-secondary">
+                    <i class="fas fa-forward"></i> Пропустити
+                </button>
+                <div class="streak">
+                    <i class="fas fa-fire"></i> Серія: <strong id="streakCount">0</strong>
+                </div>
+            </div>
+        </div>
+        <!-- Статистика -->
+        <div id="stats-screen" class="screen">
+            <div class="stats-header">
+                <h2><i class="fas fa-chart-pie"></i> Статистика</h2>
+                <button id="backFromStats" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Назад
+                </button>
+            </div>
+            <div class="stats-content">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: #4a6fa5;">
+                            <i class="fas fa-vote-yea"></i>
+                        </div>
+                        <h3>Загальні вибори</h3>
+                        <p class="stat-number" id="totalGlobalVotes">0</p>
+                        <p class="stat-desc">Всього голосів у системі</p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: #e67e22;">
+                            <i class="fas fa-balance-scale"></i>
+                        </div>
+                        <h3>Ваш баланс</h3>
+                        <p class="stat-number" id="userBalance">50%</p>
+                        <p class="stat-desc">Середнє по вашим виборам</p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: #27ae60;">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <h3>Ваша активність</h3>
+                        <p class="stat-number" id="userActivity">0</p>
+                        <p class="stat-desc">Виборів сьогодні</p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: #8e44ad;">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <h3>Ваше місце</h3>
+                        <p class="stat-number" id="userRank">#</p>
+                        <p class="stat-desc">У рейтингу активності</p>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3><i class="fas fa-chart-bar"></i> Популярність варіантів</h3>
+                    <canvas id="popularityChart"></canvas>
+                </div>
+                <div class="history">
+                    <h3><i class="fas fa-list"></i> Останні вибори</h3>
+                    <ul id="choiceHistory"></ul>
+                </div>
+            </div>
+        </div>
+        <!-- Про автора -->
+        <div id="about-screen" class="screen">
+            <div class="about-panel">
+                <button id="backFromAbout" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Назад
+                </button>
+                <div class="author-card">
+                    <div class="author-avatar">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h2>Савчук Юрій</h2>
+                    <p class="author-title">Розробник гри "Бітва Варіантів"</p>
+                    <div class="contacts">
+                        <a href="mailto:urasavchuk2206v@gmail.com" class="contact-link">
+                            <i class="fas fa-envelope"></i> urasavchuk2206v@gmail.com
+                        </a>
+                        <a href="tel:+380671995144" class="contact-link">
+                            <i class="fas fa-phone"></i> +380 67 199 51 44
+                        </a>
+                    </div>
+                    <div class="tech-stack">
+                        <span class="tech-tag">Firebase</span>
+                        <span class="tech-tag">JavaScript</span>
+                        <span class="tech-tag">HTML5/CSS3</span>
+                        <span class="tech-tag">Анімації</span>
+                        <span class="tech-tag">Адаптивний дизайн</span>
+                    </div>
+                    <p class="about-text">
+                        Гра створена для аналізу виборів людей у повсякденних ситуаціях.
+                        Кожна статистика оновлюється в реальному часі.
+                    </p>
+                    <div class="version">Версія 2.0 • 2026</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <audio id="clickSound" src="[assets.mixkit.co](https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3)" preload="auto"></audio>
+    <audio id="bgMusic" loop preload="auto">
+        <source src="[assets.mixkit.co](https://assets.mixkit.co/music/preview/mixkit-chill-abstract-loop-309.mp3)" type="audio/mpeg">
+    </audio>
+    <script src="[gstatic.com](https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js)"></script>
+    <script src="[gstatic.com](https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js)"></script>
+    <script src="[gstatic.com](https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js)"></script>
+    <script src="firebase.js"></script>
+    <script src="[cdn.jsdelivr.net](https://cdn.jsdelivr.net/npm/chart.js)"></script>
+    <script src="script.js"></script>
 </body>
 </html>
