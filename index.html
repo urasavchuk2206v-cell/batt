@@ -1,54 +1,78 @@
 <!DOCTYPE html>
 <html lang="uk">
-
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Battle Vote</title>
+<title>World Choice</title>
 
 <style>
 
 body{
 margin:0;
 font-family:Arial;
-background:#111;
+background:#121212;
 color:white;
-overflow:hidden;
+transition:0.3s;
+overflow-x:hidden;
 }
 
 header{
 background:#000;
-padding:20px;
+padding:15px;
 display:flex;
 justify-content:space-between;
 align-items:center;
 }
 
 .logo{
-font-size:26px;
-color:red;
+font-size:24px;
+color:#ff4444;
 }
 
-button{
-padding:12px 20px;
+.menuButtons button{
+margin-left:10px;
+padding:10px 16px;
 cursor:pointer;
-font-size:16px;
+border:none;
+background:#222;
+color:white;
 }
 
-.center{
+.menuButtons button:hover{
+background:#444;
+}
+
+#lobby{
+height:85vh;
 display:flex;
+flex-direction:column;
 justify-content:center;
 align-items:center;
-height:80vh;
-flex-direction:column;
+text-align:center;
+}
+
+#lobby h1{
+font-size:50px;
+margin-bottom:20px;
+}
+
+#lobby button{
+padding:15px 30px;
+font-size:18px;
+margin:10px;
+cursor:pointer;
+}
+
+#game{
+display:none;
+height:90vh;
 }
 
 .voteArea{
-display:none;
-height:80vh;
 display:flex;
+height:100%;
 }
 
 .choice{
@@ -62,7 +86,7 @@ overflow:hidden;
 width:100%;
 height:100%;
 object-fit:cover;
-transition:0.3s;
+transition:0.4s;
 }
 
 .choice:hover img{
@@ -73,33 +97,54 @@ transform:scale(1.1);
 position:absolute;
 bottom:20px;
 left:20px;
+font-size:28px;
 background:rgba(0,0,0,0.6);
 padding:10px;
-font-size:22px;
 }
 
-#statsPanel{
+#resultBar{
+position:absolute;
+bottom:0;
+left:0;
+width:100%;
+height:8px;
+background:#333;
+}
+
+#resultFill{
+height:100%;
+width:50%;
+background:#00ffcc;
+}
+
+.sidePanel{
 position:fixed;
-right:-400px;
+right:-350px;
 top:0;
-width:400px;
+width:350px;
 height:100%;
 background:#000;
 padding:20px;
 transition:0.4s;
+overflow:auto;
 }
 
-#statsPanel.open{
+.sidePanel.open{
 right:0;
 }
 
-.stat{
+.statItem{
 margin:10px 0;
 }
 
-.online{
-font-size:40px;
-color:#00ffaa;
+.history{
+margin-top:20px;
+font-size:14px;
+}
+
+.light{
+background:white;
+color:black;
 }
 
 </style>
@@ -110,27 +155,32 @@ color:#00ffaa;
 
 <header>
 
-<div class="logo">BATTLE VOTE</div>
+<div class="logo">WORLD CHOICE</div>
 
-<div>
+<div class="menuButtons">
 
-<button onclick="start()">Start</button>
-
-<button onclick="toggleStats()">Online</button>
+<button onclick="openStats()">📊 Stats</button>
+<button onclick="openOnline()">🌐 Online</button>
+<button onclick="toggleTheme()">🎨 Theme</button>
+<button onclick="exitGame()">❌ Exit</button>
 
 </div>
 
 </header>
 
-<div class="center" id="menu">
+<div id="lobby">
 
-<h1>Choose What Is Better</h1>
+<h1>Choose One</h1>
 
-<p>Vote and see what people prefer</p>
+<p>See what people prefer</p>
+
+<button onclick="startGame()">Start</button>
 
 </div>
 
-<div class="voteArea" id="voteArea">
+<div id="game">
+
+<div class="voteArea">
 
 <div class="choice" onclick="vote(1)">
 
@@ -150,93 +200,84 @@ color:#00ffaa;
 
 </div>
 
-<div id="statsPanel">
+<div id="resultBar">
+<div id="resultFill"></div>
+</div>
+
+</div>
+
+<div id="statsPanel" class="sidePanel">
 
 <h2>Statistics</h2>
 
-<div class="online" id="onlineCount">0</div>
+<div class="statItem">Option A: <span id="s1">0</span></div>
+<div class="statItem">Option B: <span id="s2">0</span></div>
 
-<div class="stat">
-Option 1 votes: <span id="v1">0</span>
+<div class="history" id="history"></div>
+
 </div>
 
-<div class="stat">
-Option 2 votes: <span id="v2">0</span>
-</div>
+<div id="onlinePanel" class="sidePanel">
+
+<h2>Online</h2>
+
+<div style="font-size:40px" id="onlineCount">0</div>
+
+<p>Users voting now</p>
 
 </div>
 
 <script>
 
-let votes1=0
-let votes2=0
+let votesA=0
+let votesB=0
 
-let battles=[
+let history=[]
 
-{
-a:"ATB",
-b:"Silpo",
+let polls=[
+
+{a:"ATB",b:"Silpo",
 imgA:"https://upload.wikimedia.org/wikipedia/commons/5/5e/ATB-Market_logo.svg",
-imgB:"https://upload.wikimedia.org/wikipedia/commons/3/3f/Silpo_logo.svg"
-},
+imgB:"https://upload.wikimedia.org/wikipedia/commons/3/3f/Silpo_logo.svg"},
 
-{
-a:"Pizza",
-b:"Burger",
+{a:"Pizza",b:"Burger",
 imgA:"https://images.unsplash.com/photo-1601924638867-3ec2c8c3c6b7",
-imgB:"https://images.unsplash.com/photo-1550547660-d9450f859349"
-},
+imgB:"https://images.unsplash.com/photo-1550547660-d9450f859349"},
 
-{
-a:"Cat",
-b:"Dog",
+{a:"Cat",b:"Dog",
 imgA:"https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba",
-imgB:"https://images.unsplash.com/photo-1517849845537-4d257902454a"
-},
+imgB:"https://images.unsplash.com/photo-1517849845537-4d257902454a"},
 
-{
-a:"BMW",
-b:"Mercedes",
+{a:"BMW",b:"Mercedes",
 imgA:"https://images.unsplash.com/photo-1552519507-da3b142c6e3d",
-imgB:"https://images.unsplash.com/photo-1549921296-3b0f2f5f0b7e"
-},
+imgB:"https://images.unsplash.com/photo-1549921296-3b0f2f5f0b7e"},
 
-{
-a:"Truth",
-b:"Lie",
-imgA:"https://images.unsplash.com/photo-1520974735194-5f2e89c3a9c6",
-imgB:"https://images.unsplash.com/photo-1581091870627-3a52e7f1b8c2"
-},
-
-{
-a:"Tea",
-b:"Coffee",
+{a:"Tea",b:"Coffee",
 imgA:"https://images.unsplash.com/photo-1509042239860-f550ce710b93",
-imgB:"https://images.unsplash.com/photo-1509042239860-f550ce710b93"
-}
+imgB:"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085"}
 
 ]
 
 let current
 
-function start(){
+function startGame(){
 
-document.getElementById("menu").style.display="none"
-document.getElementById("voteArea").style.display="flex"
+document.getElementById("lobby").style.display="none"
+document.getElementById("game").style.display="block"
 
-nextBattle()
+nextPoll()
 
 }
 
-function nextBattle(){
+function nextPoll(){
 
-current=battles[Math.floor(Math.random()*battles.length)]
+current=polls[Math.floor(Math.random()*polls.length)]
 
-document.getElementById("img1").src=current.imgA
-document.getElementById("img2").src=current.imgB
+img1.src=current.imgA
+img2.src=current.imgB
 
-document.getElementById("label1").innerText=current.a
-document.getElementById("label2").innerText=current.b
+label1.innerText=current.a
+label2.innerText=current.b
 
 }
 
@@ -244,18 +285,65 @@ function vote(side){
 
 if(side==1){
 
-votes1++
+votesA++
+history.push(current.a)
 
 }else{
 
-votes2++
+votesB++
+history.push(current.b)
 
 }
 
-document.getElementById("v1").innerText=votes1
-document.getElementById("v2").innerText=votes2
+updateStats()
 
-nextBattle()
+nextPoll()
+
+}
+
+function updateStats(){
+
+s1.innerText=votesA
+s2.innerText=votesB
+
+let total=votesA+votesB
+
+let percent=votesA/total*100
+
+resultFill.style.width=percent+"%"
+
+historyBox=""
+
+history.slice(-10).forEach(h=>{
+historyBox+=h+"<br>"
+})
+
+document.getElementById("history").innerHTML=historyBox
+
+}
+
+function exitGame(){
+
+document.getElementById("game").style.display="none"
+document.getElementById("lobby").style.display="flex"
+
+}
+
+function openStats(){
+
+document.getElementById("statsPanel").classList.toggle("open")
+
+}
+
+function openOnline(){
+
+document.getElementById("onlinePanel").classList.toggle("open")
+
+}
+
+function toggleTheme(){
+
+document.body.classList.toggle("light")
 
 }
 
@@ -263,19 +351,7 @@ nextBattle()
 
 <script>
 
-function toggleStats(){
-
-let panel=document.getElementById("statsPanel")
-
-panel.classList.toggle("open")
-
-}
-
-</script>
-
-<script>
-
-let online=Math.floor(Math.random()*50)+10
+let online=20+Math.floor(Math.random()*50)
 
 setInterval(()=>{
 
@@ -283,12 +359,379 @@ online+=Math.floor(Math.random()*3)-1
 
 if(online<1)online=1
 
-document.getElementById("onlineCount").innerText=online
+onlineCount.innerText=online
 
 },2000)
 
 </script>
 
 </body>
+</html><!DOCTYPE html>
+<html lang="uk">
+<head>
 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>World Choice</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#121212;
+color:white;
+transition:0.3s;
+overflow-x:hidden;
+}
+
+header{
+background:#000;
+padding:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.logo{
+font-size:24px;
+color:#ff4444;
+}
+
+.menuButtons button{
+margin-left:10px;
+padding:10px 16px;
+cursor:pointer;
+border:none;
+background:#222;
+color:white;
+}
+
+.menuButtons button:hover{
+background:#444;
+}
+
+#lobby{
+height:85vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+}
+
+#lobby h1{
+font-size:50px;
+margin-bottom:20px;
+}
+
+#lobby button{
+padding:15px 30px;
+font-size:18px;
+margin:10px;
+cursor:pointer;
+}
+
+#game{
+display:none;
+height:90vh;
+}
+
+.voteArea{
+display:flex;
+height:100%;
+}
+
+.choice{
+flex:1;
+position:relative;
+cursor:pointer;
+overflow:hidden;
+}
+
+.choice img{
+width:100%;
+height:100%;
+object-fit:cover;
+transition:0.4s;
+}
+
+.choice:hover img{
+transform:scale(1.1);
+}
+
+.label{
+position:absolute;
+bottom:20px;
+left:20px;
+font-size:28px;
+background:rgba(0,0,0,0.6);
+padding:10px;
+}
+
+#resultBar{
+position:absolute;
+bottom:0;
+left:0;
+width:100%;
+height:8px;
+background:#333;
+}
+
+#resultFill{
+height:100%;
+width:50%;
+background:#00ffcc;
+}
+
+.sidePanel{
+position:fixed;
+right:-350px;
+top:0;
+width:350px;
+height:100%;
+background:#000;
+padding:20px;
+transition:0.4s;
+overflow:auto;
+}
+
+.sidePanel.open{
+right:0;
+}
+
+.statItem{
+margin:10px 0;
+}
+
+.history{
+margin-top:20px;
+font-size:14px;
+}
+
+.light{
+background:white;
+color:black;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">WORLD CHOICE</div>
+
+<div class="menuButtons">
+
+<button onclick="openStats()">📊 Stats</button>
+<button onclick="openOnline()">🌐 Online</button>
+<button onclick="toggleTheme()">🎨 Theme</button>
+<button onclick="exitGame()">❌ Exit</button>
+
+</div>
+
+</header>
+
+<div id="lobby">
+
+<h1>Choose One</h1>
+
+<p>See what people prefer</p>
+
+<button onclick="startGame()">Start</button>
+
+</div>
+
+<div id="game">
+
+<div class="voteArea">
+
+<div class="choice" onclick="vote(1)">
+
+<img id="img1">
+
+<div class="label" id="label1"></div>
+
+</div>
+
+<div class="choice" onclick="vote(2)">
+
+<img id="img2">
+
+<div class="label" id="label2"></div>
+
+</div>
+
+</div>
+
+<div id="resultBar">
+<div id="resultFill"></div>
+</div>
+
+</div>
+
+<div id="statsPanel" class="sidePanel">
+
+<h2>Statistics</h2>
+
+<div class="statItem">Option A: <span id="s1">0</span></div>
+<div class="statItem">Option B: <span id="s2">0</span></div>
+
+<div class="history" id="history"></div>
+
+</div>
+
+<div id="onlinePanel" class="sidePanel">
+
+<h2>Online</h2>
+
+<div style="font-size:40px" id="onlineCount">0</div>
+
+<p>Users voting now</p>
+
+</div>
+
+<script>
+
+let votesA=0
+let votesB=0
+
+let history=[]
+
+let polls=[
+
+{a:"ATB",b:"Silpo",
+imgA:"https://upload.wikimedia.org/wikipedia/commons/5/5e/ATB-Market_logo.svg",
+imgB:"https://upload.wikimedia.org/wikipedia/commons/3/3f/Silpo_logo.svg"},
+
+{a:"Pizza",b:"Burger",
+imgA:"https://images.unsplash.com/photo-1601924638867-3ec2c8c3c6b7",
+imgB:"https://images.unsplash.com/photo-1550547660-d9450f859349"},
+
+{a:"Cat",b:"Dog",
+imgA:"https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba",
+imgB:"https://images.unsplash.com/photo-1517849845537-4d257902454a"},
+
+{a:"BMW",b:"Mercedes",
+imgA:"https://images.unsplash.com/photo-1552519507-da3b142c6e3d",
+imgB:"https://images.unsplash.com/photo-1549921296-3b0f2f5f0b7e"},
+
+{a:"Tea",b:"Coffee",
+imgA:"https://images.unsplash.com/photo-1509042239860-f550ce710b93",
+imgB:"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085"}
+
+]
+
+let current
+
+function startGame(){
+
+document.getElementById("lobby").style.display="none"
+document.getElementById("game").style.display="block"
+
+nextPoll()
+
+}
+
+function nextPoll(){
+
+current=polls[Math.floor(Math.random()*polls.length)]
+
+img1.src=current.imgA
+img2.src=current.imgB
+
+label1.innerText=current.a
+label2.innerText=current.b
+
+}
+
+function vote(side){
+
+if(side==1){
+
+votesA++
+history.push(current.a)
+
+}else{
+
+votesB++
+history.push(current.b)
+
+}
+
+updateStats()
+
+nextPoll()
+
+}
+
+function updateStats(){
+
+s1.innerText=votesA
+s2.innerText=votesB
+
+let total=votesA+votesB
+
+let percent=votesA/total*100
+
+resultFill.style.width=percent+"%"
+
+historyBox=""
+
+history.slice(-10).forEach(h=>{
+historyBox+=h+"<br>"
+})
+
+document.getElementById("history").innerHTML=historyBox
+
+}
+
+function exitGame(){
+
+document.getElementById("game").style.display="none"
+document.getElementById("lobby").style.display="flex"
+
+}
+
+function openStats(){
+
+document.getElementById("statsPanel").classList.toggle("open")
+
+}
+
+function openOnline(){
+
+document.getElementById("onlinePanel").classList.toggle("open")
+
+}
+
+function toggleTheme(){
+
+document.body.classList.toggle("light")
+
+}
+
+</script>
+
+<script>
+
+let online=20+Math.floor(Math.random()*50)
+
+setInterval(()=>{
+
+online+=Math.floor(Math.random()*3)-1
+
+if(online<1)online=1
+
+onlineCount.innerText=online
+
+},2000)
+
+</script>
+
+</body>
 </html>
