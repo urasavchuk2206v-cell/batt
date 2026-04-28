@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>World Choice</title>
+<title>Choice Game</title>
 
 <style>
 
@@ -14,137 +13,87 @@ margin:0;
 font-family:Arial;
 background:#121212;
 color:white;
-transition:0.3s;
-overflow-x:hidden;
 }
 
 header{
 background:#000;
 padding:15px;
-display:flex;
-justify-content:space-between;
-align-items:center;
+text-align:center;
+font-size:22px;
 }
 
-.logo{
-font-size:24px;
-color:#ff4444;
-}
-
-.menuButtons button{
-margin-left:10px;
-padding:10px 16px;
-cursor:pointer;
-border:none;
-background:#222;
-color:white;
-}
-
-.menuButtons button:hover{
-background:#444;
-}
-
-#lobby{
-height:85vh;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
+.screen{
+display:none;
+padding:20px;
 text-align:center;
 }
 
-#lobby h1{
-font-size:50px;
-margin-bottom:20px;
+.active{
+display:block;
 }
 
-#lobby button{
-padding:15px 30px;
+button{
+padding:14px 24px;
 font-size:18px;
 margin:10px;
 cursor:pointer;
+border:none;
+background:#ff4444;
+color:white;
+border-radius:8px;
 }
 
-#game{
-display:none;
-height:90vh;
+button:hover{
+background:#ff2222;
 }
 
 .voteArea{
 display:flex;
-height:100%;
+flex-direction:column;
+gap:10px;
 }
 
 .choice{
-flex:1;
 position:relative;
 cursor:pointer;
-overflow:hidden;
 }
 
 .choice img{
 width:100%;
-height:100%;
+max-height:300px;
 object-fit:cover;
-transition:0.4s;
-}
-
-.choice:hover img{
-transform:scale(1.1);
+border-radius:10px;
 }
 
 .label{
 position:absolute;
-bottom:20px;
-left:20px;
-font-size:28px;
+bottom:10px;
+left:10px;
 background:rgba(0,0,0,0.6);
-padding:10px;
+padding:8px;
+border-radius:6px;
 }
 
-#resultBar{
-position:absolute;
-bottom:0;
-left:0;
-width:100%;
-height:8px;
-background:#333;
-}
-
-#resultFill{
-height:100%;
-width:50%;
-background:#00ffcc;
-}
-
-.sidePanel{
-position:fixed;
-right:-350px;
-top:0;
-width:350px;
-height:100%;
-background:#000;
-padding:20px;
-transition:0.4s;
-overflow:auto;
-}
-
-.sidePanel.open{
-right:0;
-}
-
-.statItem{
-margin:10px 0;
-}
-
-.history{
+.stats{
 margin-top:20px;
-font-size:14px;
+font-size:18px;
 }
 
-.light{
-background:white;
-color:black;
+.online{
+font-size:26px;
+color:#00ffaa;
+}
+
+@media(min-width:700px){
+
+.voteArea{
+flex-direction:row;
+}
+
+.choice img{
+height:400px;
+}
+
 }
 
 </style>
@@ -153,118 +102,121 @@ color:black;
 
 <body>
 
-<header>
+<header>Choice Game</header>
 
-<div class="logo">WORLD CHOICE</div>
+<!-- MENU -->
 
-<div class="menuButtons">
+<div id="menu" class="screen active">
 
-<button onclick="openStats()">📊 Stats</button>
-<button onclick="openOnline()">🌐 Online</button>
-<button onclick="toggleTheme()">🎨 Theme</button>
-<button onclick="exitGame()">❌ Exit</button>
+<h2>Меню</h2>
 
-</div>
-
-</header>
-
-<div id="lobby">
-
-<h1>Choose One</h1>
-
-<p>See what people prefer</p>
-
-<button onclick="startGame()">Start</button>
+<button onclick="startGame()">Грати</button>
+<button onclick="openStats()">Статистика</button>
 
 </div>
 
-<div id="game">
+<!-- GAME -->
+
+<div id="game" class="screen">
+
+<h2>Обери</h2>
 
 <div class="voteArea">
 
 <div class="choice" onclick="vote(1)">
-
 <img id="img1">
-
-<div class="label" id="label1"></div>
-
+<div class="label" id="text1"></div>
 </div>
 
 <div class="choice" onclick="vote(2)">
-
 <img id="img2">
-
-<div class="label" id="label2"></div>
-
+<div class="label" id="text2"></div>
 </div>
 
 </div>
 
-<div id="resultBar">
-<div id="resultFill"></div>
-</div>
+<br>
+
+<button onclick="exitGame()">Назад</button>
 
 </div>
 
-<div id="statsPanel" class="sidePanel">
+<!-- STATS -->
 
-<h2>Statistics</h2>
+<div id="stats" class="screen">
 
-<div class="statItem">Option A: <span id="s1">0</span></div>
-<div class="statItem">Option B: <span id="s2">0</span></div>
+<h2>Статистика</h2>
 
-<div class="history" id="history"></div>
+<div class="stats">
+
+Варіант A: <span id="countA">0</span><br>
+Варіант B: <span id="countB">0</span>
 
 </div>
 
-<div id="onlinePanel" class="sidePanel">
+<br>
 
-<h2>Online</h2>
+<div class="online">
 
-<div style="font-size:40px" id="onlineCount">0</div>
+Онлайн: <span id="online">0</span>
 
-<p>Users voting now</p>
+</div>
+
+<br>
+
+<button onclick="backMenu()">Назад</button>
 
 </div>
 
 <script>
 
-let votesA=0
-let votesB=0
-
-let history=[]
-
 let polls=[
 
-{a:"ATB",b:"Silpo",
+{
+a:"ATB",
+b:"Silpo",
 imgA:"https://upload.wikimedia.org/wikipedia/commons/5/5e/ATB-Market_logo.svg",
-imgB:"https://upload.wikimedia.org/wikipedia/commons/3/3f/Silpo_logo.svg"},
+imgB:"https://upload.wikimedia.org/wikipedia/commons/3/3f/Silpo_logo.svg"
+},
 
-{a:"Pizza",b:"Burger",
+{
+a:"Pizza",
+b:"Burger",
 imgA:"https://images.unsplash.com/photo-1601924638867-3ec2c8c3c6b7",
-imgB:"https://images.unsplash.com/photo-1550547660-d9450f859349"},
+imgB:"https://images.unsplash.com/photo-1550547660-d9450f859349"
+},
 
-{a:"Cat",b:"Dog",
+{
+a:"Cat",
+b:"Dog",
 imgA:"https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba",
-imgB:"https://images.unsplash.com/photo-1517849845537-4d257902454a"},
+imgB:"https://images.unsplash.com/photo-1517849845537-4d257902454a"
+},
 
-{a:"BMW",b:"Mercedes",
-imgA:"https://images.unsplash.com/photo-1552519507-da3b142c6e3d",
-imgB:"https://images.unsplash.com/photo-1549921296-3b0f2f5f0b7e"},
-
-{a:"Tea",b:"Coffee",
+{
+a:"Tea",
+b:"Coffee",
 imgA:"https://images.unsplash.com/photo-1509042239860-f550ce710b93",
-imgB:"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085"}
+imgB:"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085"
+}
 
 ]
 
+let votesA=0
+let votesB=0
+
 let current
+
+function show(id){
+
+document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"))
+document.getElementById(id).classList.add("active")
+
+}
 
 function startGame(){
 
-document.getElementById("lobby").style.display="none"
-document.getElementById("game").style.display="block"
-
+show("game")
 nextPoll()
 
 }
@@ -276,460 +228,76 @@ current=polls[Math.floor(Math.random()*polls.length)]
 img1.src=current.imgA
 img2.src=current.imgB
 
-label1.innerText=current.a
-label2.innerText=current.b
+text1.innerText=current.a
+text2.innerText=current.b
 
 }
 
 function vote(side){
 
 if(side==1){
-
 votesA++
-history.push(current.a)
-
 }else{
-
 votesB++
-history.push(current.b)
-
 }
 
-updateStats()
+countA.innerText=votesA
+countB.innerText=votesB
 
 nextPoll()
-
-}
-
-function updateStats(){
-
-s1.innerText=votesA
-s2.innerText=votesB
-
-let total=votesA+votesB
-
-let percent=votesA/total*100
-
-resultFill.style.width=percent+"%"
-
-historyBox=""
-
-history.slice(-10).forEach(h=>{
-historyBox+=h+"<br>"
-})
-
-document.getElementById("history").innerHTML=historyBox
 
 }
 
 function exitGame(){
 
-document.getElementById("game").style.display="none"
-document.getElementById("lobby").style.display="flex"
+show("menu")
 
 }
 
 function openStats(){
 
-document.getElementById("statsPanel").classList.toggle("open")
+show("stats")
 
 }
 
-function openOnline(){
+function backMenu(){
 
-document.getElementById("onlinePanel").classList.toggle("open")
-
-}
-
-function toggleTheme(){
-
-document.body.classList.toggle("light")
+show("menu")
 
 }
 
 </script>
 
-<script>
+<script type="module">
 
-let online=20+Math.floor(Math.random()*50)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"
+import { getDatabase, ref, set, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
 
-setInterval(()=>{
-
-online+=Math.floor(Math.random()*3)-1
-
-if(online<1)online=1
-
-onlineCount.innerText=online
-
-},2000)
-
-</script>
-
-</body>
-</html><!DOCTYPE html>
-<html lang="uk">
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>World Choice</title>
-
-<style>
-
-body{
-margin:0;
-font-family:Arial;
-background:#121212;
-color:white;
-transition:0.3s;
-overflow-x:hidden;
+const firebaseConfig={
+apiKey:"YOUR_KEY",
+authDomain:"YOUR_DOMAIN",
+databaseURL:"YOUR_DB",
+projectId:"YOUR_PROJECT"
 }
 
-header{
-background:#000;
-padding:15px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
+const app=initializeApp(firebaseConfig)
+const db=getDatabase(app)
 
-.logo{
-font-size:24px;
-color:#ff4444;
-}
+const onlineRef=ref(db,"online")
+const userRef=ref(db,"online/"+Math.random())
 
-.menuButtons button{
-margin-left:10px;
-padding:10px 16px;
-cursor:pointer;
-border:none;
-background:#222;
-color:white;
-}
+set(userRef,true)
 
-.menuButtons button:hover{
-background:#444;
-}
+onDisconnect(userRef).remove()
 
-#lobby{
-height:85vh;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-text-align:center;
-}
+onValue(onlineRef,(snap)=>{
 
-#lobby h1{
-font-size:50px;
-margin-bottom:20px;
-}
+let count=0
+snap.forEach(()=>count++)
 
-#lobby button{
-padding:15px 30px;
-font-size:18px;
-margin:10px;
-cursor:pointer;
-}
+document.getElementById("online").innerText=count
 
-#game{
-display:none;
-height:90vh;
-}
-
-.voteArea{
-display:flex;
-height:100%;
-}
-
-.choice{
-flex:1;
-position:relative;
-cursor:pointer;
-overflow:hidden;
-}
-
-.choice img{
-width:100%;
-height:100%;
-object-fit:cover;
-transition:0.4s;
-}
-
-.choice:hover img{
-transform:scale(1.1);
-}
-
-.label{
-position:absolute;
-bottom:20px;
-left:20px;
-font-size:28px;
-background:rgba(0,0,0,0.6);
-padding:10px;
-}
-
-#resultBar{
-position:absolute;
-bottom:0;
-left:0;
-width:100%;
-height:8px;
-background:#333;
-}
-
-#resultFill{
-height:100%;
-width:50%;
-background:#00ffcc;
-}
-
-.sidePanel{
-position:fixed;
-right:-350px;
-top:0;
-width:350px;
-height:100%;
-background:#000;
-padding:20px;
-transition:0.4s;
-overflow:auto;
-}
-
-.sidePanel.open{
-right:0;
-}
-
-.statItem{
-margin:10px 0;
-}
-
-.history{
-margin-top:20px;
-font-size:14px;
-}
-
-.light{
-background:white;
-color:black;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<header>
-
-<div class="logo">WORLD CHOICE</div>
-
-<div class="menuButtons">
-
-<button onclick="openStats()">📊 Stats</button>
-<button onclick="openOnline()">🌐 Online</button>
-<button onclick="toggleTheme()">🎨 Theme</button>
-<button onclick="exitGame()">❌ Exit</button>
-
-</div>
-
-</header>
-
-<div id="lobby">
-
-<h1>Choose One</h1>
-
-<p>See what people prefer</p>
-
-<button onclick="startGame()">Start</button>
-
-</div>
-
-<div id="game">
-
-<div class="voteArea">
-
-<div class="choice" onclick="vote(1)">
-
-<img id="img1">
-
-<div class="label" id="label1"></div>
-
-</div>
-
-<div class="choice" onclick="vote(2)">
-
-<img id="img2">
-
-<div class="label" id="label2"></div>
-
-</div>
-
-</div>
-
-<div id="resultBar">
-<div id="resultFill"></div>
-</div>
-
-</div>
-
-<div id="statsPanel" class="sidePanel">
-
-<h2>Statistics</h2>
-
-<div class="statItem">Option A: <span id="s1">0</span></div>
-<div class="statItem">Option B: <span id="s2">0</span></div>
-
-<div class="history" id="history"></div>
-
-</div>
-
-<div id="onlinePanel" class="sidePanel">
-
-<h2>Online</h2>
-
-<div style="font-size:40px" id="onlineCount">0</div>
-
-<p>Users voting now</p>
-
-</div>
-
-<script>
-
-let votesA=0
-let votesB=0
-
-let history=[]
-
-let polls=[
-
-{a:"ATB",b:"Silpo",
-imgA:"https://upload.wikimedia.org/wikipedia/commons/5/5e/ATB-Market_logo.svg",
-imgB:"https://upload.wikimedia.org/wikipedia/commons/3/3f/Silpo_logo.svg"},
-
-{a:"Pizza",b:"Burger",
-imgA:"https://images.unsplash.com/photo-1601924638867-3ec2c8c3c6b7",
-imgB:"https://images.unsplash.com/photo-1550547660-d9450f859349"},
-
-{a:"Cat",b:"Dog",
-imgA:"https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba",
-imgB:"https://images.unsplash.com/photo-1517849845537-4d257902454a"},
-
-{a:"BMW",b:"Mercedes",
-imgA:"https://images.unsplash.com/photo-1552519507-da3b142c6e3d",
-imgB:"https://images.unsplash.com/photo-1549921296-3b0f2f5f0b7e"},
-
-{a:"Tea",b:"Coffee",
-imgA:"https://images.unsplash.com/photo-1509042239860-f550ce710b93",
-imgB:"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085"}
-
-]
-
-let current
-
-function startGame(){
-
-document.getElementById("lobby").style.display="none"
-document.getElementById("game").style.display="block"
-
-nextPoll()
-
-}
-
-function nextPoll(){
-
-current=polls[Math.floor(Math.random()*polls.length)]
-
-img1.src=current.imgA
-img2.src=current.imgB
-
-label1.innerText=current.a
-label2.innerText=current.b
-
-}
-
-function vote(side){
-
-if(side==1){
-
-votesA++
-history.push(current.a)
-
-}else{
-
-votesB++
-history.push(current.b)
-
-}
-
-updateStats()
-
-nextPoll()
-
-}
-
-function updateStats(){
-
-s1.innerText=votesA
-s2.innerText=votesB
-
-let total=votesA+votesB
-
-let percent=votesA/total*100
-
-resultFill.style.width=percent+"%"
-
-historyBox=""
-
-history.slice(-10).forEach(h=>{
-historyBox+=h+"<br>"
 })
-
-document.getElementById("history").innerHTML=historyBox
-
-}
-
-function exitGame(){
-
-document.getElementById("game").style.display="none"
-document.getElementById("lobby").style.display="flex"
-
-}
-
-function openStats(){
-
-document.getElementById("statsPanel").classList.toggle("open")
-
-}
-
-function openOnline(){
-
-document.getElementById("onlinePanel").classList.toggle("open")
-
-}
-
-function toggleTheme(){
-
-document.body.classList.toggle("light")
-
-}
-
-</script>
-
-<script>
-
-let online=20+Math.floor(Math.random()*50)
-
-setInterval(()=>{
-
-online+=Math.floor(Math.random()*3)-1
-
-if(online<1)online=1
-
-onlineCount.innerText=online
-
-},2000)
 
 </script>
 
