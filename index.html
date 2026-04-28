@@ -4,22 +4,18 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Battle Site</title>
+<title>Battle Hub</title>
 
 <style>
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
-
 body{
+margin:0;
 font-family:Arial;
-background:#0b0b0b;
+background:#111;
 color:white;
+transition:0.5s;
 overflow-x:hidden;
 }
 
@@ -28,35 +24,27 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 padding:20px;
-background:#111;
-border-bottom:2px solid #ff4444;
+background:#000;
 }
 
 .logo{
 font-size:28px;
-color:#ff4444;
-font-weight:bold;
+color:red;
 }
 
-nav a{
-margin:15px;
-text-decoration:none;
-color:white;
-font-size:18px;
-transition:0.3s;
-}
-
-nav a:hover{
-color:#ff4444;
+nav button{
+margin:5px;
+padding:10px 15px;
+cursor:pointer;
 }
 
 .hero{
-height:90vh;
-background:url("https://images.unsplash.com/photo-1542751371-adc38448a05e") center/cover;
+height:80vh;
 display:flex;
 justify-content:center;
 align-items:center;
-text-align:center;
+flex-direction:column;
+background:url("https://images.unsplash.com/photo-1542751371-adc38448a05e") center/cover;
 }
 
 .hero h1{
@@ -64,194 +52,190 @@ font-size:60px;
 text-shadow:0 0 20px black;
 }
 
-.hero p{
-font-size:22px;
-margin:20px;
-}
-
-button{
-padding:15px 40px;
-font-size:20px;
-background:#ff4444;
-border:none;
-border-radius:6px;
-cursor:pointer;
-transition:0.3s;
-}
-
-button:hover{
-transform:scale(1.1);
-background:#ff2222;
-}
-
-.online{
-padding:80px;
+.section{
+padding:60px;
 text-align:center;
 }
 
-#onlineCount{
-font-size:60px;
-color:#00ffaa;
-}
-
-.gallery{
-padding:80px;
-text-align:center;
-}
-
-.images{
+.battles{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
 gap:20px;
-padding:40px;
 }
 
-.images img{
-width:100%;
-border-radius:10px;
-transition:0.5s;
-}
-
-.images img:hover{
-transform:scale(1.1);
-}
-
-.features{
-padding:80px;
-display:flex;
-flex-wrap:wrap;
-justify-content:center;
-gap:40px;
-}
-
-.feature{
-width:250px;
-padding:30px;
-background:#111;
+.card{
+background:#222;
+padding:20px;
 border-radius:10px;
 transition:0.3s;
+cursor:pointer;
 }
 
-.feature:hover{
-transform:translateY(-10px);
+.card:hover{
+transform:scale(1.05);
 box-shadow:0 0 20px red;
 }
 
-footer{
-padding:40px;
-text-align:center;
-background:#111;
+.card img{
+width:100%;
+border-radius:10px;
+}
+
+.online{
+font-size:50px;
+color:#00ffcc;
+}
+
+.themeButton{
+margin:10px;
+padding:10px;
 }
 
 #particles{
 position:fixed;
 top:0;
 left:0;
-width:100%;
-height:100%;
-pointer-events:none;
 z-index:-1;
+}
+
+.light{
+background:white;
+color:black;
+}
+
+.dark{
+background:#111;
+color:white;
 }
 
 </style>
 
 </head>
 
-<body>
+<body class="dark">
 
 <canvas id="particles"></canvas>
 
 <header>
 
-<div class="logo">
-BATTLE
-</div>
+<div class="logo">BATTLE HUB</div>
 
 <nav>
 
-<a href="#">Home</a>
-<a href="#">Online</a>
-<a href="#">Gallery</a>
-<a href="#">About</a>
+<button onclick="scrollToSection('battles')">Battles</button>
+<button onclick="scrollToSection('online')">Online</button>
+<button onclick="changeTheme()">Theme</button>
+<button onclick="changeMenuBackground()">Menu BG</button>
 
 </nav>
 
 </header>
 
-<section class="hero">
+<section class="hero" id="menu">
 
-<div>
+<h1>Epic Battles</h1>
 
-<h1>Epic Battle Arena</h1>
-
-<p>Fight players from around the world</p>
-
-<button onclick="play()">PLAY</button>
-
-</div>
+<button onclick="playSound()">Start</button>
 
 </section>
 
-<section class="online">
+<section class="section" id="online">
 
 <h2>Online players</h2>
 
-<div id="onlineCount">0</div>
+<div class="online" id="onlineCount">0</div>
 
 </section>
 
-<section class="gallery">
+<section class="section" id="battles">
 
-<h2>Battle Gallery</h2>
+<h2>Battle Modes</h2>
 
-<div class="images">
+<div class="battles">
 
+<div class="card" onclick="battle()">
 <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420">
+<h3>Sword Battle</h3>
+</div>
 
-<img src="https://images.unsplash.com/photo-1542751371-adc38448a05e">
-
-<img src="https://images.unsplash.com/photo-1606112219348-204d7d8b94ee">
-
-<img src="https://images.unsplash.com/photo-1605902711622-cfb43c4437b5">
-
+<div class="card" onclick="battle()">
 <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f">
+<h3>Gun Battle</h3>
+</div>
 
+<div class="card" onclick="battle()">
+<img src="https://images.unsplash.com/photo-1605902711622-cfb43c4437b5">
+<h3>Cyber Fight</h3>
+</div>
+
+<div class="card" onclick="battle()">
 <img src="https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf">
+<h3>Robot War</h3>
+</div>
+
+<div class="card" onclick="battle()">
+<img src="https://images.unsplash.com/photo-1542751371-adc38448a05e">
+<h3>Sniper Duel</h3>
+</div>
+
+<div class="card" onclick="battle()">
+<img src="https://images.unsplash.com/photo-1606112219348-204d7d8b94ee">
+<h3>War Arena</h3>
+</div>
 
 </div>
 
 </section>
 
-<section class="features">
+<section class="section">
 
-<div class="feature">
-<h3>Fast Battles</h3>
-<p>Instant online fights</p>
-</div>
+<h2>Theme</h2>
 
-<div class="feature">
-<h3>Global Players</h3>
-<p>Players from all countries</p>
-</div>
-
-<div class="feature">
-<h3>Epic Graphics</h3>
-<p>Modern design and effects</p>
-</div>
+<button class="themeButton" onclick="setDark()">Dark</button>
+<button class="themeButton" onclick="setLight()">Light</button>
 
 </section>
-
-<footer>
-
-<p>2026 Battle Game</p>
-
-</footer>
 
 <script>
 
-function play(){
+function scrollToSection(id){
+document.getElementById(id).scrollIntoView({behavior:"smooth"})
+}
 
-alert("Game coming soon")
+function battle(){
+playSound()
+alert("Battle starting soon")
+}
+
+</script>
+
+<script>
+
+let audio = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg")
+
+function playSound(){
+audio.play()
+}
+
+</script>
+
+<script>
+
+function setLight(){
+document.body.className="light"
+}
+
+function setDark(){
+document.body.className="dark"
+}
+
+function changeTheme(){
+
+if(document.body.className=="dark"){
+setLight()
+}else{
+setDark()
+}
 
 }
 
@@ -259,16 +243,35 @@ alert("Game coming soon")
 
 <script>
 
-let canvas = document.getElementById("particles")
+let backgrounds=[
 
-let ctx = canvas.getContext("2d")
+"https://images.unsplash.com/photo-1542751371-adc38448a05e",
+"https://images.unsplash.com/photo-1511512578047-dfb367046420",
+"https://images.unsplash.com/photo-1605902711622-cfb43c4437b5"
 
-canvas.width = window.innerWidth
-canvas.height = window.innerHeight
+]
 
-let particles = []
+function changeMenuBackground(){
 
-for(let i=0;i<120;i++){
+let bg=backgrounds[Math.floor(Math.random()*backgrounds.length)]
+
+document.querySelector(".hero").style.background="url("+bg+") center/cover"
+
+}
+
+</script>
+
+<script>
+
+let canvas=document.getElementById("particles")
+let ctx=canvas.getContext("2d")
+
+canvas.width=window.innerWidth
+canvas.height=window.innerHeight
+
+let particles=[]
+
+for(let i=0;i<100;i++){
 
 particles.push({
 
@@ -286,7 +289,7 @@ function animate(){
 
 ctx.clearRect(0,0,canvas.width,canvas.height)
 
-for(let p of particles){
+particles.forEach(p=>{
 
 p.x+=p.speedX
 p.y+=p.speedY
@@ -302,7 +305,7 @@ ctx.arc(p.x,p.y,p.size,0,Math.PI*2)
 ctx.fillStyle="white"
 ctx.fill()
 
-}
+})
 
 requestAnimationFrame(animate)
 
@@ -324,7 +327,7 @@ onValue,
 onDisconnect
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-const firebaseConfig = {
+const firebaseConfig={
 
 apiKey:"YOUR_KEY",
 authDomain:"YOUR_DOMAIN",
@@ -334,50 +337,26 @@ storageBucket:"YOUR_BUCKET",
 messagingSenderId:"YOUR_MSG",
 appId:"YOUR_APP"
 
-};
+}
 
-const app = initializeApp(firebaseConfig);
+const app=initializeApp(firebaseConfig)
 
-const db = getDatabase(app);
+const db=getDatabase(app)
 
-const onlineRef = ref(db,"online");
+const onlineRef=ref(db,"online")
 
-const userRef = ref(db,"online/"+Math.random());
+const userRef=ref(db,"online/"+Math.random())
 
-set(userRef,true);
+set(userRef,true)
 
-onDisconnect(userRef).remove();
+onDisconnect(userRef).remove()
 
 onValue(onlineRef,(snap)=>{
 
-let count = 0
-
+let count=0
 snap.forEach(()=>count++)
 
-document.getElementById("onlineCount").innerText = count
-
-})
-
-</script>
-
-<script>
-
-window.addEventListener("scroll",()=>{
-
-let features = document.querySelectorAll(".feature")
-
-features.forEach(el=>{
-
-let pos = el.getBoundingClientRect().top
-
-if(pos < window.innerHeight){
-
-el.style.opacity = "1"
-el.style.transform = "translateY(0)"
-
-}
-
-})
+document.getElementById("onlineCount").innerText=count
 
 })
 
