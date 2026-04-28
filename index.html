@@ -3,637 +3,559 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Битва Виборів | Обери свій шлях</title>
+    <title>Битва Виборів</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
-            background: linear-gradient(145deg, #f0f2f5 0%, #e6e9ef 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #e8edf2;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            position: relative;
+            padding: 16px;
         }
 
-        .app-container {
-            max-width: 700px;
-            width: 100%;
-            background: rgba(255,255,255,0.85);
-            backdrop-filter: blur(12px);
-            border-radius: 64px 48px 64px 48px;
-            box-shadow: 0 25px 45px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.5);
+        /* головний контейнер */
+        .app {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 48px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
             overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            transition: all 0.2s;
         }
 
-        .header-stats {
-            background: #1e1f24cc;
-            backdrop-filter: blur(20px);
+        /* верхня панель */
+        .top-bar {
+            background: #1a1e2c;
             padding: 14px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
             color: white;
         }
 
-        .online-box {
-            background: #00000055;
+        .online-badge {
+            background: #2a2e42;
             padding: 6px 14px;
-            border-radius: 60px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .online-dot {
-            width: 12px;
-            height: 12px;
-            background: #2ecc71;
-            border-radius: 50%;
-            animation: pulse 1.5s infinite;
-            box-shadow: 0 0 6px #2ecc71;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.4; transform: scale(0.9);}
-            100% { opacity: 1; transform: scale(1.2);}
-        }
-
-        .avatar-group {
+            border-radius: 40px;
             display: flex;
             align-items: center;
             gap: 8px;
-            flex-wrap: wrap;
+            font-size: 14px;
+            font-weight: 600;
         }
 
-        .avatar-mini {
+        .online-dot {
+            width: 10px;
+            height: 10px;
+            background: #2ecc71;
+            border-radius: 50%;
+            animation: pulse 1.2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; transform: scale(0.8);}
+            100% { opacity: 1; transform: scale(1.2);}
+        }
+
+        .avatars {
+            display: flex;
+            gap: 6px;
+        }
+
+        .avatar {
             width: 36px;
             height: 36px;
-            background: #4a4e6b;
+            background: #3e435b;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
             font-weight: bold;
+            font-size: 16px;
             color: white;
-            border: 2px solid #fff;
+            border: 2px solid #ffd966;
         }
 
+        /* екрани */
         .screen {
-            padding: 24px 20px 34px;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px);}
-            to { opacity: 1; transform: translateY(0);}
+            padding: 28px 22px 32px;
         }
 
         .hidden {
             display: none;
         }
 
+        /* кнопки */
         .btn {
-            background: #2c2e3a;
-            border: none;
-            padding: 14px 18px;
-            border-radius: 60px;
-            font-weight: 700;
-            font-size: 1rem;
-            color: white;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
             width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 60px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.15s;
             margin: 8px 0;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #3f4e74, #2d3a58);
+            background: #2c3e66;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        .btn-primary:active { transform: scale(0.97); }
+        .btn-primary:active { transform: scale(0.96); background: #1e2e4a;}
 
         .btn-outline {
-            background: transparent;
-            border: 1.5px solid #3f4e74;
-            color: #1f2c46;
+            background: white;
+            border: 1.5px solid #2c3e66;
+            color: #2c3e66;
         }
 
         .btn-donate {
-            background: linear-gradient(135deg, #e67e22, #d35400);
+            background: #f39c12;
+            color: white;
+            box-shadow: 0 2px 8px rgba(243,156,18,0.3);
         }
 
-        .game-options {
+        .btn-donate:active { transform: scale(0.96); background: #e67e22;}
+
+        /* поле вводу */
+        .input-name {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 60px;
+            margin-bottom: 16px;
+            outline: none;
+            text-align: center;
+        }
+
+        /* картки вибору */
+        .choices {
             display: flex;
-            gap: 20px;
-            justify-content: center;
+            gap: 16px;
             margin: 20px 0;
             flex-wrap: wrap;
         }
 
-        .option-card {
+        .choice-card {
             flex: 1;
-            background: white;
-            border-radius: 48px;
-            padding: 20px 10px;
+            background: #f8f9fc;
+            border-radius: 36px;
+            padding: 20px 12px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.25s ease;
-            box-shadow: 0 12px 20px rgba(0,0,0,0.1);
-            border: 1px solid #ffffffaa;
+            transition: 0.12s linear;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #e9ecef;
         }
 
-        .option-card:active { transform: scale(0.96); }
-        
-        .option-img {
-            width: 160px;
-            height: 160px;
+        .choice-card:active { transform: scale(0.97); background: #edf2f7;}
+
+        .choice-img {
+            width: 140px;
+            height: 140px;
             object-fit: cover;
-            border-radius: 40px;
-            margin-bottom: 16px;
-            background: linear-gradient(135deg, #e0e0e0, #f5f5f5);
-            box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+            border-radius: 32px;
+            margin-bottom: 12px;
+            background: #d9e2ec;
         }
-        
-        .emoji-placeholder {
-            width: 160px;
-            height: 160px;
+
+        .emoji-block {
+            width: 140px;
+            height: 140px;
+            background: #ffe9ce;
+            border-radius: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 6rem;
-            background: linear-gradient(135deg, #ffe6f0, #ffd4e5);
-            border-radius: 40px;
-            margin-bottom: 16px;
-            margin-left: auto;
-            margin-right: auto;
-            box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+            font-size: 68px;
+            margin: 0 auto 12px;
         }
 
-        .stat-container {
-            background: #f8f9ffcc;
-            border-radius: 32px;
-            padding: 20px;
-            margin-top: 15px;
-            max-height: 55vh;
+        .choice-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+
+        /* статистика */
+        .stats-box {
+            background: #f1f3f7;
+            border-radius: 28px;
+            padding: 16px;
+            max-height: 460px;
             overflow-y: auto;
         }
 
-        .stat-item {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid #ccc;
-            padding: 12px 0;
-            flex-wrap: wrap;
-            gap: 8px;
+        .stat-row {
+            background: white;
+            border-radius: 20px;
+            padding: 12px;
+            margin-bottom: 10px;
         }
 
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #ddd;
+        .stat-question {
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .stat-values {
+            font-size: 13px;
+            color: #2c3e66;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress {
+            height: 6px;
+            background: #e0e4ec;
             border-radius: 10px;
+            margin-top: 6px;
             overflow: hidden;
-            margin-top: 8px;
         }
 
         .progress-fill {
             height: 100%;
-            background: #3f4e74;
-            transition: width 0.3s;
+            background: #2c3e66;
+            width: 50%;
         }
 
         footer {
             text-align: center;
-            padding: 15px;
-            font-size: 0.75rem;
-            border-top: 1px solid #ddd9;
-            background: #ffffff40;
-        }
-        
-        input {
-            width: 100%;
-            padding: 14px;
-            border-radius: 60px;
-            border: 1px solid #bbb;
-            margin-bottom: 16px;
-            font-size: 16px;
+            font-size: 12px;
+            color: #6c757d;
+            padding: 16px 20px;
+            border-top: 1px solid #eef2f6;
         }
 
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 48px;
-            padding: 30px;
+        .question-counter {
             text-align: center;
-            max-width: 300px;
-            width: 90%;
+            font-size: 14px;
+            color: #5a6874;
+            margin-bottom: 8px;
         }
 
-        .card-number {
-            font-size: 1.2rem;
-            font-weight: bold;
-            background: #f0f2f5;
-            padding: 12px;
-            border-radius: 60px;
-            margin: 15px 0;
-            letter-spacing: 2px;
-        }
-
-        .close-modal {
-            background: #2c2e3a;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 60px;
-            cursor: pointer;
-        }
-        
-        @media (max-width: 550px) {
-            .option-img, .emoji-placeholder { width: 110px; height: 110px; font-size: 4rem;}
-            .game-options { gap: 12px;}
-            .stat-item { flex-direction: column; align-items: flex-start;}
-        }
-        
-        @media (max-width: 480px) {
-            .option-img, .emoji-placeholder { width: 90px; height: 90px; font-size: 3rem;}
+        @media (max-width: 500px) {
+            .choice-img, .emoji-block { width: 100px; height: 100px; font-size: 48px;}
+            .choice-title { font-size: 16px;}
+            .screen { padding: 20px 16px;}
         }
     </style>
 </head>
 <body>
-<div class="app-container">
-    <div class="header-stats">
-        <div class="online-box">
+<div class="app" id="app">
+    <div class="top-bar">
+        <div class="online-badge">
             <span class="online-dot"></span>
-            <span id="onlineCounter">67</span> <span>онлайн</span>
+            <span id="onlineCount">67</span> онлайн
         </div>
-        <div class="avatar-group" id="avatarGroupHeader">
-            <div class="avatar-mini" id="myAvatarPreview">🙂</div>
+        <div class="avatars" id="avatarsList">
+            <div class="avatar">К</div>
+            <div class="avatar">М</div>
+            <div class="avatar">А</div>
+            <div class="avatar">Ю</div>
         </div>
     </div>
 
-    <!-- Екран реєстрації -->
-    <div id="registerScreen" class="screen">
+    <!-- реєстрація -->
+    <div id="regScreen" class="screen">
         <h2 style="text-align:center; margin-bottom:20px;">✨ Битва виборів ✨</h2>
-        <input type="text" id="usernameInput" placeholder="Твоє ім'я (напр. Максим)" autocomplete="off">
-        <button id="startRegisterBtn" class="btn btn-primary">🚀 Почати подорож</button>
-        <div style="margin-top:20px; font-size:12px; color:#555; text-align:center;">💡 Твій нікнейм: <span id="previewNick">Макс Суслік</span></div>
-        <button id="authorBtn" style="margin-top: 25px; background:none; border:none; color:#2c3e66; text-decoration:underline; cursor:pointer;">Автор: Савчук Юрій</button>
+        <input type="text" id="nickInput" class="input-name" placeholder="Наприклад, Максим" autocomplete="off">
+        <button id="startRegBtn" class="btn btn-primary">🚀 Почати гру</button>
+        <div style="text-align:center; margin-top:14px; font-size:13px;">👉 твій нік: <strong id="previewNick">Макс Суслік</strong></div>
+        <button id="authorBtn" style="display:block; width:100%; margin-top:28px; background:none; border:none; color:#2c3e66; text-decoration:underline; font-size:14px;">Савчук Юрій</button>
     </div>
 
-    <!-- Головне меню -->
+    <!-- головне меню -->
     <div id="menuScreen" class="screen hidden">
-        <div style="text-align:center; margin-bottom:20px; font-size:1.2rem;" id="greetingMsg">Вітаю, <strong id="userNameDisplay">Гість</strong>!</div>
-        <div style="margin: 20px 0;">
-            <button id="playBtnMenu" class="btn btn-primary">🎮 ГРАТИ</button>
-            <button id="statsBtnMenu" class="btn btn-outline">📊 СТАТИСТИКА</button>
-            <button id="donateBtnMenu" class="btn btn-donate">💛 ПІДТРИМАТИ ДОНАТОМ</button>
-            <button id="logoutBtnMenu" class="btn" style="background:#5a626e;">🚪 Вийти</button>
-        </div>
-        <footer>⚡ обери між двома — без підтверджень, одразу наступне питання!</footer>
+        <div style="text-align:center; margin-bottom:28px; font-size:22px; font-weight:600;" id="greetingText">Вітаю, <span id="userName">Гість</span>!</div>
+        <button id="playBtn" class="btn btn-primary">🎮 ГРАТИ</button>
+        <button id="statsBtn" class="btn btn-outline">📊 СТАТИСТИКА</button>
+        <button id="donateBtn" class="btn btn-donate">💛 ДОНАТ</button>
+        <button id="logoutBtn" class="btn" style="background:#adb5bd; color:white;">🚪 Вийти</button>
+        <footer>натискай на картинку — одразу новий вибір</footer>
     </div>
 
-    <!-- Екран гри -->
+    <!-- гра -->
     <div id="gameScreen" class="screen hidden">
-        <div style="text-align: center; margin-bottom: 10px; font-size: 0.9rem; color: #666;">
-            Питання <span id="questionIndex">1</span> / <span id="totalQuestions">0</span>
-        </div>
-        <h3 id="questionText" style="margin-bottom:16px; text-align:center;">Чай ☕ чи Кава?</h3>
-        <div class="game-options" id="gameOptionsContainer"></div>
-        <button id="backToMenuFromGame" class="btn btn-outline">⬅ Назад в меню</button>
+        <div class="question-counter">питання <span id="qCurrent">1</span> / <span id="qTotal">0</span></div>
+        <h3 id="questionTitle" style="text-align:center; margin-bottom:20px;">Завантаження...</h3>
+        <div class="choices" id="choicesContainer"></div>
+        <button id="backMenuGame" class="btn btn-outline">⬅ Головне меню</button>
     </div>
 
-    <!-- Статистика -->
+    <!-- статистика -->
     <div id="statsScreen" class="screen hidden">
-        <h3>📈 Глобальна статистика виборів</h3>
-        <div id="statList" class="stat-container">Завантаження...</div>
-        <button id="backToMenuFromStats" class="btn btn-outline" style="margin-top:18px;">🏠 До меню</button>
+        <h3 style="margin-bottom:14px;">📊 Рейтинг виборів</h3>
+        <div id="statsList" class="stats-box">Завантаження...</div>
+        <button id="backMenuStats" class="btn btn-outline" style="margin-top:18px;">🏠 В меню</button>
     </div>
 </div>
 
 <script>
-    // ==================== РОЗШИРЕНА БАЗА ПИТАНЬ (30+ унікальних) ====================
-    const QUESTION_BANK = [
-        { id: 1, text: "Що обираєш сьогодні?", optA: "Чай 🍃", optB: "Кава ☕", imgA: "https://picsum.photos/id/225/300/200", imgB: "https://picsum.photos/id/431/300/200", special: false },
-        { id: 2, text: "Хто твій вайб?", optA: "Мілфа ✨", optB: "Студентка 🎓", imgA: "https://picsum.photos/id/26/300/200", imgB: "https://picsum.photos/id/20/300/200", special: false },
-        { id: 3, text: "Що важливіше?", optA: "Машини 🚗", optB: "Цінності 💎", imgA: "https://picsum.photos/id/107/300/200", imgB: "https://picsum.photos/id/42/300/200", special: false },
-        { id: 4, text: "Правда чи брехня?", optA: "Правда 🧠", optB: "Брехня 🎭", imgA: "heart", imgB: "broken", special: true, emojiA: "❤️", emojiB: "💔" },
-        { id: 5, text: "Що обираєш?", optA: "Моменти 📸", optB: "Гроші 💰", imgA: "https://picsum.photos/id/20/300/200", imgB: "https://picsum.photos/id/29/300/200", special: false },
-        { id: 6, text: "Ставлення до життя?", optA: "Любов 💕", optB: "Байдужість 😐", imgA: "heart", imgB: "neutral", special: true, emojiA: "💖", emojiB: "💨" },
-        { id: 7, text: "Ти хто?", optA: "Оптиміст 🌞", optB: "Песиміст 🌧️", imgA: "sun", imgB: "rain", special: true, emojiA: "☀️", emojiB: "⛈️" },
-        { id: 8, text: "Хто кращий друг?", optA: "Коти 🐱", optB: "Собаки 🐶", imgA: "https://picsum.photos/id/219/300/200", imgB: "https://picsum.photos/id/237/300/200", special: false },
-        { id: 9, text: "Куди поїдемо?", optA: "Пляж 🌊", optB: "Гори ⛰️", imgA: "https://picsum.photos/id/15/300/200", imgB: "https://picsum.photos/id/104/300/200", special: false },
-        { id: 10, text: "Італійська кухня?", optA: "Піца 🍕", optB: "Паста 🍝", imgA: "https://picsum.photos/id/108/300/200", imgB: "https://picsum.photos/id/127/300/200", special: false },
-        { id: 11, text: "Що краще вранці?", optA: "Душ 🚿", optB: "Кава ☕", imgA: "https://picsum.photos/id/143/300/200", imgB: "https://picsum.photos/id/431/300/200", special: false },
-        { id: 12, text: "Твій стиль?", optA: "Класика 👔", optB: "Кежуал 👕", imgA: "https://picsum.photos/id/114/300/200", imgB: "https://picsum.photos/id/155/300/200", special: false },
-        { id: 13, text: "Що обираєш у вихідні?", optA: "Кіно 🎬", optB: "Прогулянка 🌳", imgA: "https://picsum.photos/id/184/300/200", imgB: "https://picsum.photos/id/96/300/200", special: false },
-        { id: 14, text: "Твоя суперсила?", optA: "Невидимість 👻", optB: "Політ 🦅", imgA: "https://picsum.photos/id/251/300/200", imgB: "https://picsum.photos/id/31/300/200", special: false },
-        { id: 15, text: "Що береш на острів?", optA: "Книга 📖", optB: "Музика 🎵", imgA: "https://picsum.photos/id/0/300/200", imgB: "https://picsum.photos/id/139/300/200", special: false },
-        { id: 16, text: "Твій ідеальний вечір?", optA: "Netflix 🍿", optB: "Вечірка 🎉", imgA: "https://picsum.photos/id/20/300/200", imgB: "https://picsum.photos/id/29/300/200", special: false },
-        { id: 17, text: "Що обираєш?", optA: "Розум 🧠", optB: "Краса 💅", imgA: "https://picsum.photos/id/125/300/200", imgB: "https://picsum.photos/id/26/300/200", special: false },
-        { id: 18, text: "Твоя стихія?", optA: "Вогонь 🔥", optB: "Вода 💧", imgA: "https://picsum.photos/id/131/300/200", imgB: "https://picsum.photos/id/15/300/200", special: false },
-        { id: 19, text: "Що краще?", optA: "Солодке 🍰", optB: "Солоний 🍟", imgA: "https://picsum.photos/id/108/300/200", imgB: "https://picsum.photos/id/127/300/200", special: false },
-        { id: 20, text: "Твій транспорт?", optA: "Авто 🚗", optB: "Велосипед 🚲", imgA: "https://picsum.photos/id/107/300/200", imgB: "https://picsum.photos/id/131/300/200", special: false },
-        { id: 21, text: "Що важливіше в роботі?", optA: "Гроші 💰", optB: "Задоволення 😊", imgA: "https://picsum.photos/id/29/300/200", imgB: "https://picsum.photos/id/20/300/200", special: false },
-        { id: 22, text: "Твій ранг в іграх?", optA: "Танк 🛡️", optB: "Маг 🔮", imgA: "https://picsum.photos/id/106/300/200", imgB: "https://picsum.photos/id/195/300/200", special: false },
-        { id: 23, text: "Що обираєш?", optA: "Сон 😴", optB: "Їжа 🍔", imgA: "https://picsum.photos/id/229/300/200", imgB: "https://picsum.photos/id/108/300/200", special: false },
-        { id: 24, text: "Твій улюблений жанр?", optA: "Комедія 😂", optB: "Жахи 👻", imgA: "https://picsum.photos/id/189/300/200", imgB: "https://picsum.photos/id/251/300/200", special: false },
-        { id: 25, text: "Що обираєш вранці?", optA: "Зарядка 💪", optB: "Спати довше 🛌", imgA: "https://picsum.photos/id/143/300/200", imgB: "https://picsum.photos/id/229/300/200", special: false },
-        { id: 26, text: "Твій улюблений колір?", optA: "Чорний 🖤", optB: "Білий 🤍", imgA: "https://picsum.photos/id/114/300/200", imgB: "https://picsum.photos/id/155/300/200", special: false },
-        { id: 27, text: "Що обираєш?", optA: "Кіберпанк 🤖", optB: "Фентезі 🧙", imgA: "https://picsum.photos/id/106/300/200", imgB: "https://picsum.photos/id/96/300/200", special: false },
-        { id: 28, text: "Твій ідеальний подарунок?", optA: "Подорож ✈️", optB: "Гаджет 📱", imgA: "https://picsum.photos/id/15/300/200", imgB: "https://picsum.photos/id/0/300/200", special: false },
-        { id: 29, text: "Що важливіше?", optA: "Здоров'я ❤️", optB: "Успіх 🏆", imgA: "https://picsum.photos/id/143/300/200", imgB: "https://picsum.photos/id/107/300/200", special: true, emojiA: "❤️", emojiB: "🏆" },
-        { id: 30, text: "Твій звір", optA: "Вовк 🐺", optB: "Лев 🦁", imgA: "https://picsum.photos/id/237/300/200", imgB: "https://picsum.photos/id/219/300/200", special: false }
+    // --------------------------------------------------------------
+    // 1. БАЗА ПИТАНЬ (30+ унікальних)
+    // --------------------------------------------------------------
+    const QUESTIONS = [
+        { id: 0, text: "Що обрати сьогодні?", a: "Чай 🍵", b: "Кава ☕", imgA: "https://picsum.photos/id/225/300/200", imgB: "https://picsum.photos/id/431/300/200", special: false },
+        { id: 1, text: "Хто більше до вподоби?", a: "Мілфа ✨", b: "Студентка 🎓", imgA: "https://picsum.photos/id/26/300/200", imgB: "https://picsum.photos/id/20/300/200", special: false },
+        { id: 2, text: "Що цінніше?", a: "Машина 🚗", b: "Цінності 💎", imgA: "https://picsum.photos/id/107/300/200", imgB: "https://picsum.photos/id/42/300/200", special: false },
+        { id: 3, text: "Правда чи брехня?", a: "Правда 🧠", b: "Брехня 🎭", special: true, emojiA: "❤️", emojiB: "💔" },
+        { id: 4, text: "Що обираєш?", a: "Моменти 📸", b: "Гроші 💰", imgA: "https://picsum.photos/id/20/300/200", imgB: "https://picsum.photos/id/29/300/200", special: false },
+        { id: 5, text: "Ставлення до світу?", a: "Любов 💖", b: "Байдужість 😐", special: true, emojiA: "💖", emojiB: "💨" },
+        { id: 6, text: "Ти хто за настроєм?", a: "Оптиміст ☀️", b: "Песиміст 🌧️", special: true, emojiA: "☀️", emojiB: "⛈️" },
+        { id: 7, text: "Хто кращий друг?", a: "Коти 🐱", b: "Собаки 🐶", imgA: "https://picsum.photos/id/219/300/200", imgB: "https://picsum.photos/id/237/300/200", special: false },
+        { id: 8, text: "Відпочинок мрії?", a: "Пляж 🌊", b: "Гори ⛰️", imgA: "https://picsum.photos/id/15/300/200", imgB: "https://picsum.photos/id/104/300/200", special: false },
+        { id: 9, text: "Італійська кухня?", a: "Піца 🍕", b: "Паста 🍝", imgA: "https://picsum.photos/id/108/300/200", imgB: "https://picsum.photos/id/127/300/200", special: false },
+        { id: 10, text: "Ранок починається з?", a: "Зарядка 💪", b: "Кава ☕", imgA: "https://picsum.photos/id/143/300/200", imgB: "https://picsum.photos/id/431/300/200", special: false },
+        { id: 11, text: "Твій стиль?", a: "Класика 👔", b: "Кежуал 👕", imgA: "https://picsum.photos/id/114/300/200", imgB: "https://picsum.photos/id/155/300/200", special: false },
+        { id: 12, text: "Вільний час?", a: "Кіно 🎬", b: "Прогулянка 🌳", imgA: "https://picsum.photos/id/184/300/200", imgB: "https://picsum.photos/id/96/300/200", special: false },
+        { id: 13, text: "Суперсила?", a: "Невидимість 👻", b: "Політ 🦅", imgA: "https://picsum.photos/id/251/300/200", imgB: "https://picsum.photos/id/31/300/200", special: false },
+        { id: 14, text: "На безлюдний острів?", a: "Книга 📖", b: "Музика 🎵", imgA: "https://picsum.photos/id/0/300/200", imgB: "https://picsum.photos/id/139/300/200", special: false },
+        { id: 15, text: "Ідеальний вечір?", a: "Netflix 🍿", b: "Вечірка 🎉", imgA: "https://picsum.photos/id/20/300/200", imgB: "https://picsum.photos/id/29/300/200", special: false },
+        { id: 16, text: "Що важливіше?", a: "Розум 🧠", b: "Краса 💅", imgA: "https://picsum.photos/id/125/300/200", imgB: "https://picsum.photos/id/26/300/200", special: false },
+        { id: 17, text: "Твоя стихія?", a: "Вогонь 🔥", b: "Вода 💧", imgA: "https://picsum.photos/id/131/300/200", imgB: "https://picsum.photos/id/15/300/200", special: false },
+        { id: 18, text: "Ласун чи солоне?", a: "Солодке 🍰", b: "Солоний 🍟", imgA: "https://picsum.photos/id/108/300/200", imgB: "https://picsum.photos/id/127/300/200", special: false },
+        { id: 19, text: "Транспорт?", a: "Авто 🚗", b: "Велосипед 🚲", imgA: "https://picsum.photos/id/107/300/200", imgB: "https://picsum.photos/id/131/300/200", special: false },
+        { id: 20, text: "Робота — це?", a: "Гроші 💰", b: "Задоволення 😊", imgA: "https://picsum.photos/id/29/300/200", imgB: "https://picsum.photos/id/20/300/200", special: false },
+        { id: 21, text: "Твій жанр?", a: "Комедія 😂", b: "Жахи 👻", imgA: "https://picsum.photos/id/189/300/200", imgB: "https://picsum.photos/id/251/300/200", special: false },
+        { id: 22, text: "Що обираєш?", a: "Кіберпанк 🤖", b: "Фентезі 🧙", imgA: "https://picsum.photos/id/106/300/200", imgB: "https://picsum.photos/id/96/300/200", special: false },
+        { id: 23, text: "Подарунок?", a: "Подорож ✈️", b: "Гаджет 📱", imgA: "https://picsum.photos/id/15/300/200", imgB: "https://picsum.photos/id/0/300/200", special: false },
+        { id: 24, text: "Здоров'я чи успіх?", a: "Здоров'я ❤️", b: "Успіх 🏆", special: true, emojiA: "❤️", emojiB: "🏆" },
+        { id: 25, text: "Тварина-тотем?", a: "Вовк 🐺", b: "Лев 🦁", imgA: "https://picsum.photos/id/237/300/200", imgB: "https://picsum.photos/id/219/300/200", special: false },
+        { id: 26, text: "Ранок: спати чи діяти?", a: "Постелитись 🛌", b: "Бігти 🏃", imgA: "https://picsum.photos/id/229/300/200", imgB: "https://picsum.photos/id/143/300/200", special: false },
+        { id: 27, text: "Зима чи літо?", a: "Зима ❄️", b: "Літо ☀️", special: true, emojiA: "❄️", emojiB: "☀️" },
+        { id: 28, text: "Вечірка вдома чи в клубі?", a: "Вдома 🏠", b: "Клуб 🔥", imgA: "https://picsum.photos/id/169/300/200", imgB: "https://picsum.photos/id/29/300/200", special: false }
     ];
 
-    // ==================== ЗМІННІ ====================
-    let currentUser = null;
-    let currentQuestionIndex = 0;
-    let remainingQuestions = [];
-    let statsData = {};
-
-    // Завантаження статистики з localStorage
-    function loadStatsFromStorage() {
-        const saved = localStorage.getItem('battle_stats');
-        if (saved) {
-            statsData = JSON.parse(saved);
-        } else {
-            statsData = {};
-            QUESTION_BANK.forEach(q => {
-                statsData[q.id] = { A: 0, B: 0 };
-            });
+    // --------------------------------------------------------------
+    // 2. СТАТИСТИКА (localStorage)
+    // --------------------------------------------------------------
+    let votes = JSON.parse(localStorage.getItem("battleVotes")) || {};
+    function initStats() {
+        for (let q of QUESTIONS) {
+            if (!votes[q.id]) votes[q.id] = { A: 0, B: 0 };
         }
-        updateStatsDisplay();
     }
-
-    function saveStatsToStorage() {
-        localStorage.setItem('battle_stats', JSON.stringify(statsData));
+    function saveStats() { localStorage.setItem("battleVotes", JSON.stringify(votes)); }
+    function addVote(questionId, choice) {
+        if (!votes[questionId]) votes[questionId] = { A: 0, B: 0 };
+        votes[questionId][choice]++;
+        saveStats();
+        renderStats();
     }
-
-    // Голосування БЕЗ ПІДТВЕРДЖЕННЯ
-    function vote(questionId, choice) {
-        if (!statsData[questionId]) statsData[questionId] = { A: 0, B: 0 };
-        statsData[questionId][choice]++;
-        saveStatsToStorage();
-        updateStatsDisplay();
-    }
-
-    function updateStatsDisplay() {
-        const statsDiv = document.getElementById('statList');
-        if (!statsDiv) return;
-        
-        let html = '';
-        for (let q of QUESTION_BANK) {
-            let qStats = statsData[q.id] || { A: 0, B: 0 };
-            let total = (qStats.A || 0) + (qStats.B || 0);
-            let percentA = total ? Math.round((qStats.A || 0)/total*100) : 50;
-            let percentB = total ? Math.round((qStats.B || 0)/total*100) : 50;
-            html += `<div class="stat-item">
-                        <strong>${q.text}</strong>
-                        <span>✅ ${q.optA}: ${percentA}% (${qStats.A||0}) &nbsp;|&nbsp; ${q.optB}: ${percentB}% (${qStats.B||0})</span>
-                        <div class="progress-bar"><div class="progress-fill" style="width: ${percentA}%;"></div></div>
+    function renderStats() {
+        const container = document.getElementById("statsList");
+        if (!container) return;
+        let html = "";
+        for (let q of QUESTIONS) {
+            let stat = votes[q.id] || { A: 0, B: 0 };
+            let total = stat.A + stat.B;
+            let pA = total ? Math.round(stat.A / total * 100) : 50;
+            let pB = total ? Math.round(stat.B / total * 100) : 50;
+            html += `<div class="stat-row">
+                        <div class="stat-question">${q.text}</div>
+                        <div class="stat-values">
+                            <span>✅ ${q.a} ${stat.A} (${pA}%)</span>
+                            <span>✅ ${q.b} ${stat.B} (${pB}%)</span>
+                        </div>
+                        <div class="progress"><div class="progress-fill" style="width: ${pA}%;"></div></div>
                      </div>`;
         }
-        statsDiv.innerHTML = html || "<i>Немає голосів, будь першим!</i>";
+        container.innerHTML = html;
     }
 
-    function generateSlug(name) {
-        if (!name) return "Анонім";
-        let base = name.trim().split(" ")[0];
-        let suffix = Math.floor(Math.random() * 100);
-        let funny = ["Суслік", "Вовчик", "Кексик", "Маг", "Лис", "Хижак", "Смайлик", "Грім", "Сонечко", "Їжак", "Кролик", "Ведмедик", "Панда", "Тигр"];
-        let rand = funny[Math.floor(Math.random() * funny.length)];
-        return `${base} ${rand}${suffix}`;
-    }
+    // --------------------------------------------------------------
+    // 3. ГРА (унікальні питання по колу)
+    // --------------------------------------------------------------
+    let currentUserObj = null;
+    let questionsPool = [];
+    let currentQuestionIdx = 0;
 
-    // Ініціалізація гри (перемішуємо питання)
-    function initGame() {
-        remainingQuestions = [...QUESTION_BANK];
-        for (let i = remainingQuestions.length - 1; i > 0; i--) {
+    function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [remainingQuestions[i], remainingQuestions[j]] = [remainingQuestions[j], remainingQuestions[i]];
+            [arr[i], arr[j]] = [arr[j], arr[i]];
         }
-        currentQuestionIndex = 0;
-        document.getElementById('totalQuestions').innerText = remainingQuestions.length;
-        document.getElementById('questionIndex').innerText = currentQuestionIndex + 1;
+        return arr;
     }
 
-    function startGame() {
-        if (!remainingQuestions.length || currentQuestionIndex >= remainingQuestions.length) {
-            initGame();
+    function resetGameQueue() {
+        questionsPool = shuffleArray([...QUESTIONS]);
+        currentQuestionIdx = 0;
+    }
+
+    function renderCurrentQuestion() {
+        if (!questionsPool.length || currentQuestionIdx >= questionsPool.length) {
+            resetGameQueue();
         }
-        
-        const qData = remainingQuestions[currentQuestionIndex];
-        document.getElementById('questionText').innerHTML = qData.text;
-        document.getElementById('questionIndex').innerText = currentQuestionIndex + 1;
-        const container = document.getElementById('gameOptionsContainer');
-        
-        let optionAHtml, optionBHtml;
-        
-        if (qData.special) {
-            optionAHtml = `
-                <div class="option-card" data-choice="A" data-id="${qData.id}">
-                    <div class="emoji-placeholder">${qData.emojiA || '❤️'}</div>
-                    <h3>${qData.optA}</h3>
+        const q = questionsPool[currentQuestionIdx];
+        document.getElementById("questionTitle").innerText = q.text;
+        document.getElementById("qCurrent").innerText = currentQuestionIdx + 1;
+        document.getElementById("qTotal").innerText = questionsPool.length;
+
+        const container = document.getElementById("choicesContainer");
+        if (q.special) {
+            container.innerHTML = `
+                <div class="choice-card" data-choice="A">
+                    <div class="emoji-block">${q.emojiA || "❓"}</div>
+                    <div class="choice-title">${q.a}</div>
                 </div>
-            `;
-            optionBHtml = `
-                <div class="option-card" data-choice="B" data-id="${qData.id}">
-                    <div class="emoji-placeholder">${qData.emojiB || '💔'}</div>
-                    <h3>${qData.optB}</h3>
+                <div class="choice-card" data-choice="B">
+                    <div class="emoji-block">${q.emojiB || "❓"}</div>
+                    <div class="choice-title">${q.b}</div>
                 </div>
             `;
         } else {
-            optionAHtml = `
-                <div class="option-card" data-choice="A" data-id="${qData.id}">
-                    <img class="option-img" src="${qData.imgA}" alt="varA" loading="lazy">
-                    <h3>${qData.optA}</h3>
+            container.innerHTML = `
+                <div class="choice-card" data-choice="A">
+                    <img class="choice-img" src="${q.imgA}" loading="lazy" onerror="this.src='https://picsum.photos/200/200'">
+                    <div class="choice-title">${q.a}</div>
                 </div>
-            `;
-            optionBHtml = `
-                <div class="option-card" data-choice="B" data-id="${qData.id}">
-                    <img class="option-img" src="${qData.imgB}" alt="varB" loading="lazy">
-                    <h3>${qData.optB}</h3>
+                <div class="choice-card" data-choice="B">
+                    <img class="choice-img" src="${q.imgB}" loading="lazy" onerror="this.src='https://picsum.photos/200/200'">
+                    <div class="choice-title">${q.b}</div>
                 </div>
             `;
         }
-        
-        container.innerHTML = optionAHtml + optionBHtml;
-        
-        // Обробники без підтвердження - одразу наступне питання
-        document.querySelectorAll('.option-card').forEach(card => {
-            card.addEventListener('click', function onClick() {
-                const choiceVal = this.getAttribute('data-choice');
-                const questionId = parseInt(this.getAttribute('data-id'));
-                vote(questionId, choiceVal);
-                playSoftClick();
-                
-                // Анімація кліку
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = '';
-                    // Переходимо до наступного питання
-                    currentQuestionIndex++;
-                    if (currentQuestionIndex >= remainingQuestions.length) {
-                        // Пройшли всі питання - починаємо заново
-                        initGame();
-                    }
-                    startGame();
-                }, 150);
-            }, { once: true });
-        });
-        
-        document.getElementById('gameScreen').classList.remove('hidden');
-        document.getElementById('menuScreen').classList.add('hidden');
-        document.getElementById('statsScreen').classList.add('hidden');
-    }
-
-    function playSoftClick() {
-        try {
-            let audio = new Audio("data:audio/wav;base64,U3RlYWx0aCBzb2Z0IGNsaWNr");
-            audio.volume = 0.1;
-            audio.play().catch(e => {});
-        } catch(e) {}
-    }
-
-    // Донат модалка
-    function showDonateModal() {
-        const modal = document.createElement('div');
-        modal.className = 'modal';
-        modal.innerHTML = `
-            <div class="modal-content">
-                <h3>💛 Підтримати проект</h3>
-                <p>Номер картки для донатів:</p>
-                <div class="card-number">4441 1110 6225 4846</div>
-                <button class="close-modal" onclick="this.parentElement.parentElement.remove()">Закрити</button>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) modal.remove();
+        // події - без підтвердження, одразу далі
+        document.querySelectorAll(".choice-card").forEach(card => {
+            card.removeEventListener("click", handleChoice);
+            card.addEventListener("click", handleChoice);
         });
     }
 
-    // Реєстрація
-    function registerUser(rawName) {
-        if (!rawName.trim()) {
-            alert("Введи своє ім'я!");
-            return false;
+    function handleChoice(e) {
+        const card = e.currentTarget;
+        const choice = card.getAttribute("data-choice");
+        const question = questionsPool[currentQuestionIdx];
+        if (!question) return;
+        addVote(question.id, choice);
+        // анімація кліку
+        card.style.transform = "scale(0.96)";
+        setTimeout(() => {
+            card.style.transform = "";
+            // наступне питання
+            currentQuestionIdx++;
+            if (currentQuestionIdx >= questionsPool.length) {
+                resetGameQueue();
+            }
+            renderCurrentQuestion();
+        }, 100);
+    }
+
+    function openGameScreen() {
+        if (!questionsPool.length || currentQuestionIdx >= questionsPool.length) resetGameQueue();
+        renderCurrentQuestion();
+        setScreen("game");
+    }
+
+    // --------------------------------------------------------------
+    // 4. Нікнейм + UI
+    // --------------------------------------------------------------
+    function generateNick(nameRaw) {
+        let base = nameRaw.trim().split(" ")[0];
+        if (!base) base = "Гість";
+        let funny = ["Суслік", "Лис", "Вовчик", "Кексик", "Маг", "Їжак", "Панда", "Тигр"];
+        let rand = funny[Math.floor(Math.random() * funny.length)];
+        let num = Math.floor(Math.random() * 90) + 10;
+        return `${base} ${rand}${num}`;
+    }
+
+    function registerUser() {
+        let raw = document.getElementById("nickInput").value.trim();
+        if (!raw) {
+            alert("Введіть ім'я, будь ласка");
+            return;
         }
-        const name = rawName.trim();
-        const slug = generateSlug(name);
-        const uid = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
-        
-        currentUser = { uid, name, slug };
-        localStorage.setItem('current_user', JSON.stringify(currentUser));
-        
-        document.getElementById('userNameDisplay').innerHTML = `${name} <span style="font-size:0.8rem;">(${slug})</span>`;
-        document.getElementById('greetingMsg').innerHTML = `Вітаю, <strong>${name}</strong>! Твій нік: ${slug}`;
-        document.getElementById('myAvatarPreview').innerText = name.charAt(0).toUpperCase();
-        
-        // Генеруємо статичні аватарки онлайн (67 людей)
-        const avatarDiv = document.getElementById('avatarGroupHeader');
-        avatarDiv.innerHTML = '';
-        const letters = ['М', 'А', 'К', 'С', 'Ю', 'В', 'О', 'Л', 'Д', 'Т', 'Н', 'І', 'Р', 'Є', 'П'];
-        for (let i = 0; i < 6; i++) {
-            const ava = document.createElement('div');
-            ava.className = 'avatar-mini';
-            ava.style.background = `hsl(${Math.random() * 360}, 50%, 45%)`;
-            ava.innerText = letters[Math.floor(Math.random() * letters.length)];
-            avatarDiv.appendChild(ava);
-        }
-        
-        document.getElementById('registerScreen').classList.add('hidden');
-        document.getElementById('menuScreen').classList.remove('hidden');
-        
-        initGame();
-        return true;
+        let slug = generateNick(raw);
+        let uid = "id_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
+        currentUserObj = { name: raw, slug: slug, uid: uid };
+        localStorage.setItem("battleUser", JSON.stringify(currentUserObj));
+
+        document.getElementById("userName").innerHTML = `${raw} <span style="font-size:14px;">(${slug})</span>`;
+        document.getElementById("greetingText").innerHTML = `Вітаю, <span id="userName">${raw}</span>! ✨`;
+        setScreen("menu");
     }
 
     function logout() {
-        currentUser = null;
-        localStorage.removeItem('current_user');
-        document.getElementById('registerScreen').classList.remove('hidden');
-        document.getElementById('menuScreen').classList.add('hidden');
-        document.getElementById('gameScreen').classList.add('hidden');
-        document.getElementById('statsScreen').classList.add('hidden');
+        currentUserObj = null;
+        localStorage.removeItem("battleUser");
+        setScreen("reg");
     }
 
-    function checkSavedUser() {
-        const saved = localStorage.getItem('current_user');
+    function setScreen(screen) {
+        document.getElementById("regScreen").classList.add("hidden");
+        document.getElementById("menuScreen").classList.add("hidden");
+        document.getElementById("gameScreen").classList.add("hidden");
+        document.getElementById("statsScreen").classList.add("hidden");
+        if (screen === "reg") document.getElementById("regScreen").classList.remove("hidden");
+        if (screen === "menu") document.getElementById("menuScreen").classList.remove("hidden");
+        if (screen === "game") document.getElementById("gameScreen").classList.remove("hidden");
+        if (screen === "stats") {
+            renderStats();
+            document.getElementById("statsScreen").classList.remove("hidden");
+        }
+    }
+
+    function showDonate() {
+        alert("💛 Підтримати проект\nНомер картки: 4441 1110 6225 4846\nДякую за донат!");
+    }
+
+    // перевірка авторизації при завантаженні
+    function loadUserFromStorage() {
+        let saved = localStorage.getItem("battleUser");
         if (saved) {
             try {
-                currentUser = JSON.parse(saved);
-                document.getElementById('userNameDisplay').innerHTML = `${currentUser.name} <span style="font-size:0.8rem;">(${currentUser.slug})</span>`;
-                document.getElementById('greetingMsg').innerHTML = `Вітаю, <strong>${currentUser.name}</strong>! Твій нік: ${currentUser.slug}`;
-                document.getElementById('myAvatarPreview').innerText = currentUser.name.charAt(0).toUpperCase();
-                document.getElementById('registerScreen').classList.add('hidden');
-                document.getElementById('menuScreen').classList.remove('hidden');
-                initGame();
-                return true;
-            } catch(e) {}
+                currentUserObj = JSON.parse(saved);
+                document.getElementById("userName").innerHTML = `${currentUserObj.name} <span style="font-size:14px;">(${currentUserObj.slug})</span>`;
+                document.getElementById("greetingText").innerHTML = `Вітаю, <span id="userName">${currentUserObj.name}</span>! ✨`;
+                setScreen("menu");
+            } catch(e) { setScreen("reg"); }
+        } else {
+            setScreen("reg");
         }
-        return false;
     }
 
-    // ==================== ІНІЦІАЛІЗАЦІЯ ====================
-    window.onload = () => {
-        loadStatsFromStorage();
-        const hasUser = checkSavedUser();
-        if (!hasUser) {
-            document.getElementById('registerScreen').classList.remove('hidden');
-            document.getElementById('menuScreen').classList.add('hidden');
-        }
-        
-        // Статичний онлайн 67
-        document.getElementById('onlineCounter').innerText = '67';
-        
-        // Прелоад картинок
-        QUESTION_BANK.forEach(q => {
-            if (!q.special && q.imgA && q.imgA.startsWith('http')) {
-                new Image().src = q.imgA;
-                new Image().src = q.imgB;
-            }
-        });
-        
-        // Прев'ю ніку
-        const nameInput = document.getElementById('usernameInput');
-        const previewSpan = document.getElementById('previewNick');
-        nameInput.addEventListener('input', (e) => {
-            let val = e.target.value;
-            previewSpan.innerText = val ? generateSlug(val) : "Макс Суслік";
-        });
-    };
+    // ===================== СТАТИЧНИЙ ОНЛАЙН 67 =====================
+    document.getElementById("onlineCount").innerText = "67";
+    // аватарки різноманітні
+    const avatarsDiv = document.getElementById("avatarsList");
+    avatarsDiv.innerHTML = ["М", "А", "К", "С", "Ю", "Р", "Л", "Д"].slice(0,6).map(l => `<div class="avatar">${l}</div>`).join("");
 
-    // ==================== КНОПКИ ====================
-    document.getElementById('startRegisterBtn')?.addEventListener('click', () => {
-        registerUser(document.getElementById('usernameInput')?.value || "");
+    // прев'ю ніка
+    const nickInput = document.getElementById("nickInput");
+    const previewSpan = document.getElementById("previewNick");
+    nickInput.addEventListener("input", (e) => {
+        let val = e.target.value;
+        if (val) previewSpan.innerText = generateNick(val);
+        else previewSpan.innerText = "Макс Суслік";
     });
-    
-    document.getElementById('play
+
+    // кнопки
+    document.getElementById("startRegBtn").onclick = () => registerUser();
+    document.getElementById("playBtn").onclick = () => openGameScreen();
+    document.getElementById("statsBtn").onclick = () => { renderStats(); setScreen("stats"); };
+    document.getElementById("donateBtn").onclick = () => showDonate();
+    document.getElementById("logoutBtn").onclick = () => logout();
+    document.getElementById("backMenuGame").onclick = () => setScreen("menu");
+    document.getElementById("backMenuStats").onclick = () => setScreen("menu");
+    document.getElementById("authorBtn").onclick = () => alert("Савчук Юрій\nEmail: urasavchuk2206v@gmail.com\n+380671995144");
+
+    initStats();
+    resetGameQueue();
+    loadUserFromStorage();
+    renderStats();
+</script>
+</body>
+</html>
