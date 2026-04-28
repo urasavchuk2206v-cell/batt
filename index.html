@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Битва Виборів | Обери свій шлях</title>
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -29,7 +25,6 @@
             position: relative;
         }
 
-        /* Головний контейнер з м'якими тінями */
         .app-container {
             max-width: 700px;
             width: 100%;
@@ -43,7 +38,6 @@
             z-index: 10;
         }
 
-        /* Хедер з онлайном */
         .header-stats {
             background: #1e1f24cc;
             backdrop-filter: blur(20px);
@@ -102,17 +96,21 @@
             border: 2px solid #fff;
         }
 
-        /* Панель головного меню та екранів */
         .screen {
             padding: 24px 20px 34px;
             transition: 0.3s ease;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px);}
+            to { opacity: 1; transform: translateY(0);}
         }
 
         .hidden {
             display: none;
         }
 
-        /* Кнопки стильні */
         .btn {
             background: #2c2e3a;
             border: none;
@@ -122,13 +120,12 @@
             font-size: 1rem;
             color: white;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s ease;
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
             width: 100%;
             margin: 8px 0;
             position: relative;
             z-index: 20;
-            pointer-events: auto;
         }
 
         .btn-primary {
@@ -161,9 +158,6 @@
             transition: all 0.25s ease;
             box-shadow: 0 12px 20px rgba(0,0,0,0.1);
             border: 1px solid #ffffffaa;
-            position: relative;
-            z-index: 15;
-            pointer-events: auto;
         }
 
         .option-card:active { transform: scale(0.96);}
@@ -193,16 +187,6 @@
             box-shadow: 0 5px 12px rgba(0,0,0,0.2);
         }
 
-        .welcome-name {
-            font-size: 2rem;
-            font-weight: 800;
-            background: linear-gradient(135deg,#2c3e66,#1b1e2e);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        /* Статистика прогресс */
         .stat-container {
             background: #f8f9ffcc;
             border-radius: 32px;
@@ -229,8 +213,13 @@
             background: #ffffff40;
         }
         
-        input, button {
-            pointer-events: auto;
+        input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 60px;
+            border: 1px solid #bbb;
+            margin-bottom: 16px;
+            font-size: 16px;
         }
         
         @media (max-width: 550px) {
@@ -242,13 +231,6 @@
         @media (max-width: 480px) {
             .option-img, .emoji-placeholder { width: 90px; height: 90px; font-size: 3rem;}
         }
-        
-        /* Анімація завантаження */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px);}
-            to { opacity: 1; transform: translateY(0);}
-        }
-        .screen:not(.hidden) { animation: fadeIn 0.3s ease; }
     </style>
 </head>
 <body>
@@ -263,27 +245,27 @@
         </div>
     </div>
 
-    <!-- Екран реєстрації (ім'я) -->
+    <!-- Екран реєстрації -->
     <div id="registerScreen" class="screen">
         <h2 style="text-align:center; margin-bottom:20px;">✨ Битва виборів ✨</h2>
-        <input type="text" id="usernameInput" placeholder="Твоє ім'я (напр. Максим)" style="width:100%; padding:14px; border-radius: 60px; border: 1px solid #bbb; margin-bottom: 16px; font-size:16px; pointer-events:auto;">
+        <input type="text" id="usernameInput" placeholder="Твоє ім'я (напр. Максим)" autocomplete="off">
         <button id="startRegisterBtn" class="btn btn-primary">🚀 Почати подорож</button>
-        <div style="margin-top:20px; font-size:12px; color:#555; text-align:center;">💡 Унікальне скорочення: <span id="previewNick">Макс Суслік</span></div>
+        <div style="margin-top:20px; font-size:12px; color:#555; text-align:center;">💡 Твій нікнейм: <span id="previewNick">Макс Суслік</span></div>
         <button id="authorBtn" style="margin-top: 25px; background:none; border:none; color:#2c3e66; text-decoration:underline; cursor:pointer;">Автор: Савчук Юрій</button>
     </div>
 
     <!-- Головне меню -->
     <div id="menuScreen" class="screen hidden">
-        <div style="text-align:center; margin-bottom:20px;" id="greetingMsg">Вітаю, <strong id="userNameDisplay">Гість</strong>!</div>
+        <div style="text-align:center; margin-bottom:20px; font-size:1.2rem;" id="greetingMsg">Вітаю, <strong id="userNameDisplay">Гість</strong>!</div>
         <div style="margin: 20px 0;">
             <button id="playBtnMenu" class="btn btn-primary">🎮 ГРАТИ</button>
             <button id="statsBtnMenu" class="btn btn-outline">📊 СТАТИСТИКА</button>
             <button id="logoutBtnMenu" class="btn" style="background:#5a626e;">🚪 Вийти</button>
         </div>
-        <footer>⚡ обирай між двома — правда життя</footer>
+        <footer>⚡ обери між двома — покажи свій вибір!</footer>
     </div>
 
-    <!-- Екран гри (вибір картинок) -->
+    <!-- Екран гри -->
     <div id="gameScreen" class="screen hidden">
         <h3 id="questionText" style="margin-bottom:16px; text-align:center;">Чай ☕ чи Кава?</h3>
         <div class="game-options" id="gameOptionsContainer"></div>
@@ -299,131 +281,154 @@
 </div>
 
 <script>
-    // ---------- Firebase конфіг (твій проект) ----------
-    const firebaseConfig = {
-        apiKey: "AIzaSyB4kK8X9Tz5qQ3WfYkLpM2nVxJZq7HdGxo",
-        authDomain: "batt-8d3c3.firebaseapp.com",
-        databaseURL: "https://batt-8d3c3-default-rtdb.europe-west1.firebasedatabase.app",
-        projectId: "batt-8d3c3",
-        storageBucket: "batt-8d3c3.appspot.com",
-        messagingSenderId: "123456789012",
-        appId: "1:123456789012:web:abc123def456"
-    };
-    // (Заміни на реальні дані з Firebase консолі)
-    const app = firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
-    const auth = firebase.auth();
-
-    // Глобальні змінні
-    let currentUser = null;
-    let currentQuestionSet = null;
-    let statsListenerRef = null;
-
-    // Питання/пари з підтримкою спеціальних іконок для абстрактних тем
+    // ==================== БАЗА ПИТАНЬ ====================
     const QUESTION_BANK = [
         { id: "tea_coffee", text: "Що обираєш сьогодні?", optA: "Чай 🍃", optB: "Кава ☕", imgA: "https://picsum.photos/id/225/300/200", imgB: "https://picsum.photos/id/431/300/200", special: false },
         { id: "milf_student", text: "Хто твій вайб?", optA: "Мілфа ✨", optB: "Студентка 🎓", imgA: "https://picsum.photos/id/26/300/200", imgB: "https://picsum.photos/id/20/300/200", special: false },
         { id: "cars_value", text: "Що важливіше?", optA: "Машини 🚗", optB: "Цінності 💎", imgA: "https://picsum.photos/id/107/300/200", imgB: "https://picsum.photos/id/42/300/200", special: false },
         { id: "truth_lie", text: "Правда чи брехня?", optA: "Правда 🧠", optB: "Брехня 🎭", imgA: "heart", imgB: "broken", special: true, emojiA: "❤️", emojiB: "💔" },
-        { id: "moments_money", text: "Життєві моменти?", optA: "Моменти 📸", optB: "Гроші 💰", imgA: "https://picsum.photos/id/20/300/200", imgB: "https://picsum.photos/id/29/300/200", special: false },
+        { id: "moments_money", text: "Що обираєш?", optA: "Моменти 📸", optB: "Гроші 💰", imgA: "https://picsum.photos/id/20/300/200", imgB: "https://picsum.photos/id/29/300/200", special: false },
         { id: "love_hate", text: "Ставлення до життя?", optA: "Любов 💕", optB: "Байдужість 😐", imgA: "heart", imgB: "neutral", special: true, emojiA: "💖", emojiB: "💨" },
         { id: "optimist_pessimist", text: "Ти хто?", optA: "Оптиміст 🌞", optB: "Песиміст 🌧️", imgA: "sun", imgB: "rain", special: true, emojiA: "☀️", emojiB: "⛈️" },
         { id: "cats_dogs", text: "Хто кращий друг?", optA: "Коти 🐱", optB: "Собаки 🐶", imgA: "https://picsum.photos/id/219/300/200", imgB: "https://picsum.photos/id/237/300/200", special: false },
-        { id: "beach_mount", text: "Відпочинок?", optA: "Пляж 🌊", optB: "Гори ⛰️", imgA: "https://picsum.photos/id/15/300/200", imgB: "https://picsum.photos/id/104/300/200", special: false }
+        { id: "beach_mount", text: "Куди поїдемо?", optA: "Пляж 🌊", optB: "Гори ⛰️", imgA: "https://picsum.photos/id/15/300/200", imgB: "https://picsum.photos/id/104/300/200", special: false },
+        { id: "pizza_pasta", text: "Італійська кухня?", optA: "Піца 🍕", optB: "Паста 🍝", imgA: "https://picsum.photos/id/108/300/200", imgB: "https://picsum.photos/id/127/300/200", special: false }
     ];
 
-    // Функція генерування індивідуального скорочення
+    // ==================== ЗМІННІ ====================
+    let currentUser = null;
+    let currentQuestionSet = null;
+    let statsData = {};
+    let onlineUsers = new Map();
+    let heartbeatInterval = null;
+
+    // Завантаження статистики з localStorage
+    function loadStatsFromStorage() {
+        const saved = localStorage.getItem('battle_stats');
+        if (saved) {
+            statsData = JSON.parse(saved);
+        } else {
+            statsData = {};
+            QUESTION_BANK.forEach(q => {
+                statsData[q.id] = { A: 0, B: 0 };
+            });
+        }
+    }
+
+    // Збереження статистики
+    function saveStatsToStorage() {
+        localStorage.setItem('battle_stats', JSON.stringify(statsData));
+    }
+
+    // Голосування
+    function vote(questionId, choice) {
+        if (!statsData[questionId]) statsData[questionId] = { A: 0, B: 0 };
+        statsData[questionId][choice]++;
+        saveStatsToStorage();
+        updateStatsDisplay();
+        
+        // Додаємо голос користувача в історію
+        const userHistory = JSON.parse(localStorage.getItem(`user_${currentUser.uid}_history`) || '{}');
+        userHistory[questionId] = choice;
+        localStorage.setItem(`user_${currentUser.uid}_history`, JSON.stringify(userHistory));
+    }
+
+    // Оновлення відображення статистики
+    function updateStatsDisplay() {
+        const statsDiv = document.getElementById('statList');
+        if (!statsDiv) return;
+        
+        let html = '';
+        for (let q of QUESTION_BANK) {
+            let qStats = statsData[q.id] || { A: 0, B: 0 };
+            let total = (qStats.A || 0) + (qStats.B || 0);
+            let percentA = total ? Math.round((qStats.A || 0)/total*100) : 50;
+            let percentB = total ? Math.round((qStats.B || 0)/total*100) : 50;
+            html += `<div class="stat-item">
+                        <strong>${q.text}</strong>
+                        <span>✅ ${q.optA}: ${percentA}% (${qStats.A||0}) &nbsp;|&nbsp; ${q.optB}: ${percentB}% (${qStats.B||0})</span>
+                     </div>`;
+        }
+        statsDiv.innerHTML = html || "<i>Немає голосів, будь першим!</i>";
+    }
+
+    // Генерація унікального ніку
     function generateSlug(name) {
         if (!name) return "Анонім";
         let base = name.trim().split(" ")[0];
         let suffix = Math.floor(Math.random() * 100);
-        let funny = ["Суслік", "Вовчик", "Кексик", "Маг", "Лис", "Хижак", "Смайлик", "Грім", "Блискавка", "Сонечко"];
+        let funny = ["Суслік", "Вовчик", "Кексик", "Маг", "Лис", "Хижак", "Смайлик", "Грім", "Блискавка", "Сонечко", "Їжак", "Кролик"];
         let rand = funny[Math.floor(Math.random() * funny.length)];
         return `${base} ${rand}${suffix}`;
     }
 
-    // Оновлення онлайн + аватарки
-    function updateOnlineStatus() {
-        if (!currentUser) return;
-        const userStatusRef = database.ref(`/status/${currentUser.uid}`);
-        const connectedRef = database.ref('.info/connected');
-        connectedRef.on('value', (snap) => {
-            if (snap.val() === true) {
-                userStatusRef.onDisconnect().remove();
-                userStatusRef.set({ name: currentUser.name, slug: currentUser.slug, timestamp: Date.now() });
-                database.ref('/status').on('value', (snapshot) => {
-                    const users = snapshot.val() || {};
-                    const count = Object.keys(users).length;
-                    document.getElementById('onlineCounter').innerText = count;
-                    const avatarDiv = document.getElementById('avatarGroupHeader');
-                    avatarDiv.innerHTML = '';
-                    let idx = 0;
-                    for (let uid in users) {
-                        if (idx >= 5) break;
-                        let userData = users[uid];
-                        let letter = userData.name ? userData.name.charAt(0).toUpperCase() : "?";
-                        const ava = document.createElement('div');
-                        ava.className = 'avatar-mini';
-                        ava.style.background = "#4e5b7b";
-                        ava.innerText = letter;
-                        if (uid === currentUser.uid) ava.style.border = "3px solid gold";
-                        avatarDiv.appendChild(ava);
-                        idx++;
-                    }
-                    if (idx === 0) avatarDiv.innerHTML = '<div class="avatar-mini">🌐</div>';
-                });
+    // ==================== ОНЛАЙН СИСТЕМА (без Firebase) ====================
+    function initOnlineSystem() {
+        // Генеруємо унікальний ID сесії
+        const sessionId = localStorage.getItem('session_id') || 'session_' + Date.now() + '_' + Math.random();
+        localStorage.setItem('session_id', sessionId);
+        
+        // Функція оновлення онлайн-статусу
+        function updateOnlineList() {
+            const allSessions = JSON.parse(localStorage.getItem('online_sessions') || '{}');
+            const now = Date.now();
+            let activeCount = 0;
+            const avatarDiv = document.getElementById('avatarGroupHeader');
+            
+            // Очищаємо старі сесії (>10 секунд)
+            for (let id in allSessions) {
+                if (now - allSessions[id].timestamp > 10000) {
+                    delete allSessions[id];
+                } else {
+                    activeCount++;
+                }
             }
-        });
-    }
-
-    // Запис голосу в Firebase
-    async function vote(questionId, choice) {
-        if (!currentUser) return;
-        const voteRef = database.ref(`/votes/${questionId}`);
-        const increment = firebase.database.ServerValue.increment(1);
-        const update = {};
-        update[`${choice}`] = increment;
-        await voteRef.update(update);
-        await database.ref(`/user_votes/${currentUser.uid}/${questionId}`).set(choice);
-    }
-
-    // Підписка на статистику
-    function loadGlobalStats() {
-        if (statsListenerRef) statsListenerRef.off();
-        const statsDiv = document.getElementById('statList');
-        statsDiv.innerHTML = "Завантаження даних...";
-        const allVotesRef = database.ref('/votes');
-        statsListenerRef = allVotesRef.on('value', (snapshot) => {
-            const data = snapshot.val() || {};
-            let html = '';
-            for (let q of QUESTION_BANK) {
-                let qStats = data[q.id] || { A: 0, B: 0 };
-                let total = (qStats.A || 0) + (qStats.B || 0);
-                let percentA = total ? Math.round((qStats.A || 0)/total*100) : 50;
-                let percentB = total ? Math.round((qStats.B || 0)/total*100) : 50;
-                html += `<div class="stat-item">
-                            <strong>${q.text}</strong>
-                            <span>✅ ${q.optA}: ${percentA}% (${qStats.A||0}) &nbsp;|&nbsp; ${q.optB}: ${percentB}% (${qStats.B||0})</span>
-                         </div>`;
+            
+            // Додаємо поточну сесію
+            if (currentUser) {
+                allSessions[sessionId] = {
+                    name: currentUser.name,
+                    slug: currentUser.slug,
+                    timestamp: now,
+                    letter: currentUser.name.charAt(0).toUpperCase()
+                };
+                activeCount = Object.keys(allSessions).length;
             }
-            statsDiv.innerHTML = html || "<i>Немає голосів, будь першим!</i>";
-        });
-    }
-
-    // Вихід
-    function logout() {
-        if (currentUser) {
-            database.ref(`/status/${currentUser.uid}`).remove();
+            
+            localStorage.setItem('online_sessions', JSON.stringify(allSessions));
+            document.getElementById('onlineCounter').innerText = activeCount;
+            
+            // Відображаємо аватарки
+            avatarDiv.innerHTML = '';
+            let shown = 0;
+            for (let id in allSessions) {
+                if (shown >= 5) break;
+                const s = allSessions[id];
+                const ava = document.createElement('div');
+                ava.className = 'avatar-mini';
+                ava.style.background = "#4e5b7b";
+                ava.innerText = s.letter || '?';
+                if (id === sessionId) ava.style.border = "3px solid gold";
+                avatarDiv.appendChild(ava);
+                shown++;
+            }
+            if (shown === 0) avatarDiv.innerHTML = '<div class="avatar-mini">🌐</div>';
         }
-        currentUser = null;
-        document.getElementById('registerScreen').classList.remove('hidden');
-        document.getElementById('menuScreen').classList.add('hidden');
-        document.getElementById('gameScreen').classList.add('hidden');
-        document.getElementById('statsScreen').classList.add('hidden');
-        if(statsListenerRef) statsListenerRef.off();
+        
+        // Оновлюємо кожні 3 секунди
+        if (heartbeatInterval) clearInterval(heartbeatInterval);
+        heartbeatInterval = setInterval(updateOnlineList, 3000);
+        updateOnlineList();
+        
+        // При виході видаляємо сесію
+        window.addEventListener('beforeunload', () => {
+            const allSessions = JSON.parse(localStorage.getItem('online_sessions') || '{}');
+            delete allSessions[sessionId];
+            localStorage.setItem('online_sessions', JSON.stringify(allSessions));
+        });
     }
 
-    // Функція рендеру гри з підтримкою спеціальних елементів
+    // ==================== ФУНКЦІЇ ГРИ ====================
     function startGame() {
         const randomIndex = Math.floor(Math.random() * QUESTION_BANK.length);
         currentQuestionSet = { ...QUESTION_BANK[randomIndex] };
@@ -434,7 +439,6 @@
         let optionAHtml, optionBHtml;
         
         if (qData.special) {
-            // Для абстрактних питань показуємо емодзі/символи замість картинок
             optionAHtml = `
                 <div class="option-card" data-choice="A">
                     <div class="emoji-placeholder">${qData.emojiA || '❤️'}</div>
@@ -448,7 +452,6 @@
                 </div>
             `;
         } else {
-            // Звичайні картинки з інтернету
             optionAHtml = `
                 <div class="option-card" data-choice="A">
                     <img class="option-img" src="${qData.imgA}" alt="varA" loading="lazy">
@@ -465,116 +468,117 @@
         
         container.innerHTML = optionAHtml + optionBHtml;
         
-        // Додаємо обробники подій для нових карток
+        // Додаємо обробники
         document.querySelectorAll('.option-card').forEach(card => {
-            card.removeEventListener('click', handleVote);
-            card.addEventListener('click', handleVote);
+            card.addEventListener('click', function onClick() {
+                const choiceVal = this.getAttribute('data-choice') === 'A' ? 'A' : 'B';
+                vote(currentQuestionSet.id, choiceVal);
+                // Звук
+                playSoftClick();
+                // Анімація зворотнього зв'язку
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                    alert(`Твій вибір: ${choiceVal === 'A' ? currentQuestionSet.optA : currentQuestionSet.optB}! 🎉`);
+                    startGame();
+                }, 100);
+            }, { once: true });
         });
-        
-        function handleVote(e) {
-            const card = e.currentTarget;
-            const choiceVal = card.getAttribute('data-choice') === 'A' ? 'A' : 'B';
-            vote(currentQuestionSet.id, choiceVal).then(() => {
-                alert(`Твій вибір: ${choiceVal === 'A' ? currentQuestionSet.optA : currentQuestionSet.optB}! Дякуємо за участь 🎉`);
-                startGame();
-            }).catch(err => console.error(err));
-        }
         
         document.getElementById('gameScreen').classList.remove('hidden');
         document.getElementById('menuScreen').classList.add('hidden');
         document.getElementById('statsScreen').classList.add('hidden');
     }
+    
+    // Звук при кліку
+    function playSoftClick() {
+        try {
+            let audio = new Audio("data:audio/wav;base64,U3RlYWx0aCBzb2Z0IGNsaWNr");
+            audio.volume = 0.1;
+            audio.play().catch(e => console.log("audio block"));
+        } catch(e) {}
+    }
 
-    // Реєстрація гравця
+    // Реєстрація
     function registerUser(rawName) {
         if (!rawName.trim()) {
-            alert("Введи ім'я!");
+            alert("Введи своє ім'я!");
             return false;
         }
         const name = rawName.trim();
         const slug = generateSlug(name);
-        auth.signInAnonymously().then(userCred => {
-            currentUser = {
-                uid: userCred.user.uid,
-                name: name,
-                slug: slug
-            };
-            database.ref(`/users/${currentUser.uid}`).set({ name: name, slug: slug, lastSeen: Date.now() });
-            updateOnlineStatus();
-            document.getElementById('userNameDisplay').innerHTML = `${name} / ${slug}`;
-            document.getElementById('greetingMsg').innerHTML = `Вітаю, <strong>${name}</strong> (${slug})!`;
-            document.getElementById('registerScreen').classList.add('hidden');
-            document.getElementById('menuScreen').classList.remove('hidden');
-        }).catch(e => {
-            console.error("Помилка аутентифікації:", e);
-            alert("Помилка підключення, спробуйте ще раз");
-        });
+        const uid = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+        
+        currentUser = {
+            uid: uid,
+            name: name,
+            slug: slug
+        };
+        
+        localStorage.setItem('current_user', JSON.stringify(currentUser));
+        
+        document.getElementById('userNameDisplay').innerHTML = `${name} <span style="font-size:0.8rem;">(${slug})</span>`;
+        document.getElementById('greetingMsg').innerHTML = `Вітаю, <strong>${name}</strong>! Твій нік: ${slug}`;
+        document.getElementById('myAvatarPreview').innerText = name.charAt(0).toUpperCase();
+        
+        document.getElementById('registerScreen').classList.add('hidden');
+        document.getElementById('menuScreen').classList.remove('hidden');
+        
+        // Оновлюємо онлайн
+        initOnlineSystem();
+        
         return true;
     }
-
-    // Прев'ю скорочення
-    const nameInput = document.getElementById('usernameInput');
-    const previewSpan = document.getElementById('previewNick');
-    if (nameInput) {
-        nameInput.addEventListener('input', (e) => {
-            let val = e.target.value;
-            if(val) previewSpan.innerText = generateSlug(val);
-            else previewSpan.innerText = "Макс Суслік";
-        });
-    }
-
-    // Кнопки навігації з перевіркою на існування
-    const startBtn = document.getElementById('startRegisterBtn');
-    if (startBtn) startBtn.onclick = () => registerUser(nameInput?.value || "");
     
-    const playBtn = document.getElementById('playBtnMenu');
-    if (playBtn) playBtn.onclick = () => startGame();
-    
-    const statsBtn = document.getElementById('statsBtnMenu');
-    if (statsBtn) statsBtn.onclick = () => {
-        loadGlobalStats();
-        document.getElementById('statsScreen').classList.remove('hidden');
-        document.getElementById('menuScreen').classList.add('hidden');
-        document.getElementById('gameScreen').classList.add('hidden');
-    };
-    
-    const backFromGame = document.getElementById('backToMenuFromGame');
-    if (backFromGame) backFromGame.onclick = () => {
-        document.getElementById('menuScreen').classList.remove('hidden');
-        document.getElementById('gameScreen').classList.add('hidden');
-    };
-    
-    const backFromStats = document.getElementById('backToMenuFromStats');
-    if (backFromStats) backFromStats.onclick = () => {
-        document.getElementById('menuScreen').classList.remove('hidden');
-        document.getElementById('statsScreen').classList.add('hidden');
-    };
-    
-    const logoutBtn = document.getElementById('logoutBtnMenu');
-    if (logoutBtn) logoutBtn.onclick = () => logout();
-    
-    const authorBtn = document.getElementById('authorBtn');
-    if (authorBtn) authorBtn.onclick = () => alert("Савчук Юрій\nEmail: urasavchuk2206v@gmail.com\n+380671995144\n© 2025 Всі вибори справжні");
-
-    // Звуки при кліку
-    function playSoftClick() {
-        let audio = new Audio("https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3");
-        audio.volume = 0.15;
-        audio.play().catch(e=>console.log("autoplay blocked"));
-    }
-    
-    document.body.addEventListener('click', (e) => {
-        if(e.target.closest('.btn') || e.target.closest('.option-card')) {
-            playSoftClick();
+    // Вихід
+    function logout() {
+        if (heartbeatInterval) clearInterval(heartbeatInterval);
+        // Видаляємо сесію
+        const sessionId = localStorage.getItem('session_id');
+        if (sessionId) {
+            const allSessions = JSON.parse(localStorage.getItem('online_sessions') || '{}');
+            delete allSessions[sessionId];
+            localStorage.setItem('online_sessions', JSON.stringify(allSessions));
         }
-    });
-
-    // Ініціалізація + кешування картинок
-    window.onload = () => {
+        currentUser = null;
+        localStorage.removeItem('current_user');
         document.getElementById('registerScreen').classList.remove('hidden');
         document.getElementById('menuScreen').classList.add('hidden');
         document.getElementById('gameScreen').classList.add('hidden');
         document.getElementById('statsScreen').classList.add('hidden');
+        document.getElementById('onlineCounter').innerText = '0';
+    }
+    
+    // Перевірка збереженого користувача
+    function checkSavedUser() {
+        const saved = localStorage.getItem('current_user');
+        if (saved) {
+            try {
+                currentUser = JSON.parse(saved);
+                document.getElementById('userNameDisplay').innerHTML = `${currentUser.name} <span style="font-size:0.8rem;">(${currentUser.slug})</span>`;
+                document.getElementById('greetingMsg').innerHTML = `Вітаю, <strong>${currentUser.name}</strong>! Твій нік: ${currentUser.slug}`;
+                document.getElementById('myAvatarPreview').innerText = currentUser.name.charAt(0).toUpperCase();
+                document.getElementById('registerScreen').classList.add('hidden');
+                document.getElementById('menuScreen').classList.remove('hidden');
+                initOnlineSystem();
+                return true;
+            } catch(e) {}
+        }
+        return false;
+    }
+
+    // ==================== ІНІЦІАЛІЗАЦІЯ ====================
+    window.onload = () => {
+        loadStatsFromStorage();
+        updateStatsDisplay();
+        
+        // Перевіряємо чи є збережений користувач
+        const hasUser = checkSavedUser();
+        if (!hasUser) {
+            document.getElementById('registerScreen').classList.remove('hidden');
+            document.getElementById('menuScreen').classList.add('hidden');
+        }
+        
         // Прелоад картинок
         QUESTION_BANK.forEach(q => {
             if (!q.special && q.imgA && q.imgA.startsWith('http')) {
@@ -582,7 +586,49 @@
                 const img2 = new Image(); img2.src = q.imgB;
             }
         });
+        
+        // Прев'ю ніку
+        const nameInput = document.getElementById('usernameInput');
+        const previewSpan = document.getElementById('previewNick');
+        if (nameInput) {
+            nameInput.addEventListener('input', (e) => {
+                let val = e.target.value;
+                if(val) previewSpan.innerText = generateSlug(val);
+                else previewSpan.innerText = "Макс Суслік";
+            });
+        }
     };
+    
+    // ==================== КНОПКИ ====================
+    document.getElementById('startRegisterBtn')?.addEventListener('click', () => {
+        const input = document.getElementById('usernameInput');
+        registerUser(input?.value || "");
+    });
+    
+    document.getElementById('playBtnMenu')?.addEventListener('click', () => startGame());
+    
+    document.getElementById('statsBtnMenu')?.addEventListener('click', () => {
+        updateStatsDisplay();
+        document.getElementById('statsScreen').classList.remove('hidden');
+        document.getElementById('menuScreen').classList.add('hidden');
+        document.getElementById('gameScreen').classList.add('hidden');
+    });
+    
+    document.getElementById('backToMenuFromGame')?.addEventListener('click', () => {
+        document.getElementById('menuScreen').classList.remove('hidden');
+        document.getElementById('gameScreen').classList.add('hidden');
+    });
+    
+    document.getElementById('backToMenuFromStats')?.addEventListener('click', () => {
+        document.getElementById('menuScreen').classList.remove('hidden');
+        document.getElementById('statsScreen').classList.add('hidden');
+    });
+    
+    document.getElementById('logoutBtnMenu')?.addEventListener('click', () => logout());
+    
+    document.getElementById('authorBtn')?.addEventListener('click', () => {
+        alert("Савчук Юрій\n📧 urasavchuk2206v@gmail.com\n📞 +380671995144\n© 2025 Всі вибори справжні");
+    });
 </script>
 </body>
 </html>
